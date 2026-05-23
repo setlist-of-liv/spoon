@@ -428,7 +428,7 @@
     <div class="month-toggle" onclick="toggleMonth('m01')">
       <div>
         <div class="month-name">January — 1月</div>
-        <div class="month-meta">14 sessions · 279 songs</div>
+        <div class="month-meta">22 sessions · 279 songs</div>
       </div>
       <span class="month-chevron">▾</span>
     </div>
@@ -1329,3 +1329,17 @@
 </script>
 </body>
 </html>
+
+<script>
+  // 月ごとの曲数を自動計算
+  document.querySelectorAll('.month-block').forEach(block => {
+    const songs = block.querySelectorAll('.song-row').length;
+    const meta = block.querySelector('.month-meta');
+
+    if (meta) {
+      const text = meta.textContent;
+      const updated = text.replace(/(\d+)\s*songs/, `${songs} songs`);
+      meta.textContent = updated;
+    }
+  });
+</script>
