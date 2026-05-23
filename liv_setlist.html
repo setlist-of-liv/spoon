@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>liv's Setlist Records</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --bg1: #0f0f0f;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --text: #e0e0e0;
+    --text2: #888;
+    --text3: #444;
+    --accent: #c8ff00;
+    --accent-dim: rgba(200,255,0,0.08);
+    --spoon: #ff6b35;
+    --spoon-dim: rgba(255,107,53,0.1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 4rem 2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: 'SETLIST';
+    position: absolute;
+    right: -1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(4rem, 15vw, 9rem);
+    font-weight: 700;
+    color: rgba(255,255,255,0.025);
+    pointer-events: none;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .hero-title {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: #fff;
+  }
+  .hero-title .dim { color: var(--text3); }
+  .hero-desc {
+    margin-top: 0.75rem;
+    font-size: 13px;
+    color: var(--text3);
+    font-weight: 300;
+  }
+  .platform-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 1.75rem;
+    flex-wrap: wrap;
+  }
+  .plt {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .plt:hover { border-color: #444; color: var(--text2); }
+  .plt-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .plt.spoon .plt-dot { background: var(--spoon); }
+  .plt.yt    .plt-dot { background: #ff0000; }
+  .plt.tw    .plt-dot { background: #1d9bf0; }
+
+  /* ── STATS ── */
+  .stats {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .stat {
+    padding: 1.25rem 2rem;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-n {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-n .accent { color: var(--accent); }
+  .stat-l {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  /* ── YEAR HEADING ── */
+  .year-head {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .year-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── MONTH BLOCK ── */
+  .month-block { margin-bottom: 1rem; }
+
+  .month-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+  .month-toggle:hover { border-color: var(--border2); }
+  .month-block.open .month-toggle {
+    border-radius: 8px 8px 0 0;
+    border-bottom-color: transparent;
+    background: var(--bg2);
+  }
+  .month-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+  .month-meta {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .month-chevron {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    transition: transform 0.3s ease;
+  }
+  .month-block.open .month-chevron { transform: rotate(180deg); }
+
+  /* ── MONTH BODY ── */
+  .month-body {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+  }
+  .month-block.open .month-body { display: block; }
+
+  /* ── SESSION ── */
+  .session {
+    border-bottom: 1px solid var(--border);
+  }
+  .session:last-child { border-bottom: none; }
+
+  .session-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    gap: 1rem;
+  }
+  .session-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .session-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 28px;
+  }
+  .session-info { min-width: 0; flex: 1; }
+  .session-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .session-title a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .session-title a:hover { color: var(--spoon); }
+  .spoon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    background: var(--spoon-dim);
+    border: 1px solid rgba(255,107,53,0.25);
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--spoon);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .spoon-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--spoon); }
+  .session-count {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .session-toggle-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .session-toggle-btn:hover { border-color: var(--border2); color: var(--text2); }
+  .session.open .session-toggle-btn { background: var(--bg3); }
+
+  /* ── SONG LIST ── */
+  .song-list {
+    display: none;
+    padding: 0.25rem 1.25rem 1rem 1.25rem;
+    padding-left: calc(1.25rem + 28px + 12px);
+  }
+  .session.open .song-list { display: block; }
+
+  .song-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .song-row:last-child { border-bottom: none; }
+  .song-idx {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 18px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .song-name {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .song-artist {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 300;
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.15em;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 2.5rem 1.25rem 2rem; }
+    .container { padding: 1.75rem 1.25rem 3rem; }
+    .stats { flex-wrap: wrap; }
+    .stat { padding: 1rem 1.25rem; }
+    .song-artist { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="eyebrow">Setlist Archive · 2026</p>
+  <h1 class="hero-title">liv<span class="dim">'s</span><br>Setlist Records</h1>
+  <p class="hero-desc">配信セットリスト記録 / Spoon · 歌枠まとめ</p>
+  <nav class="platform-links">
+    <a class="plt spoon" href="https://spoon.so/" target="_blank" rel="noopener">
+      <span class="plt-dot"></span>Spoon
+    </a>
+    <a class="plt yt" href="#" target="_blank" rel="noopener">
+      <span class="plt-dot"></span>YouTube
+    </a>
+    <a class="plt tw" href="#" target="_blank" rel="noopener">
+      <span class="plt-dot"></span>Twitter / X
+    </a>
+  </nav>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-n">5</div>
+    <div class="stat-l">months</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">14</div>
+    <div class="stat-l">sessions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">279</div>
+    <div class="stat-l">songs total</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n"><span class="accent">●</span> live</div>
+    <div class="stat-l">updating</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="container">
+
+  <div class="year-head">2026</div>
+
+  <!-- ══ 1月 ══ -->
+  <div class="month-block" id="m01">
+    <div class="month-toggle" onclick="toggleMonth('m01')">
+      <div>
+        <div class="month-name">January — 1月</div>
+        <div class="month-meta">14 sessions · 279 songs</div>
+      </div>
+      <span class="month-chevron">▾</span>
+    </div>
+    <div class="month-body">
+
+      <!-- #01 新年初配信 -->
+      <div class="session" id="s0101">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#01</span>
+            <div class="session-info">
+              <div class="session-title">歌枠（新年初配信）</div>
+              <div class="session-count">38 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0101')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">スパークル</span><span class="song-artist">RADWIMPS</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">ダーリン</span><span class="song-artist">Mrs. GREEN APPLE</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">EYES, NOSE, LIPS (目鼻口) -Japanese ver.-</span><span class="song-artist">SOL (from BIGBANG)</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">GIFT</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">火焔</span><span class="song-artist">DUSTCELL</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">ルーマー</span><span class="song-artist">ポリスピカデリー</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">チョコレートミルク</span><span class="song-artist">Aqu3ra</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">Shadow Shadow</span><span class="song-artist">Azari</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">drunk</span><span class="song-artist">keshi</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">Heartache</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">First Love</span><span class="song-artist">宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">メロディー</span><span class="song-artist">玉置浩二</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">After Rain</span><span class="song-artist">3House</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">シャッター</span><span class="song-artist">優里</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">リカ</span><span class="song-artist">SIX LOUNGE</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">刀ビークリスマスのテーマソング2025</span><span class="song-artist"></span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">シュガーソングとビターステップ</span><span class="song-artist">UNISON SQUARE GARDEN</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">夢中</span><span class="song-artist">BE:FIRST</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">ツキヨミ</span><span class="song-artist">King & Prince</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">BLUE</span><span class="song-artist">BIGBANG</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">インフェルノ</span><span class="song-artist">Mrs. GREEN APPLE</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">ホシアイ</span><span class="song-artist"></span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">雪の華</span><span class="song-artist">中島美嘉</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">妄想感傷代償連盟</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">25</span><span class="song-name">クイーンオブハート</span><span class="song-artist">秦 昌69</span></div>
+          <div class="song-row"><span class="song-idx">26</span><span class="song-name">Fire◎Flower</span><span class="song-artist">Halyosy</span></div>
+          <div class="song-row"><span class="song-idx">27</span><span class="song-name">BRAIN</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">28</span><span class="song-name">EYE</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">29</span><span class="song-name">Hype's</span><span class="song-artist">(sic)boy</span></div>
+          <div class="song-row"><span class="song-idx">30</span><span class="song-name">GIRL FRIEND</span><span class="song-artist">REVi</span></div>
+          <div class="song-row"><span class="song-idx">31</span><span class="song-name">Heartache</span><span class="song-artist">(sic)boy</span></div>
+          <div class="song-row"><span class="song-idx">32</span><span class="song-name">プロポーズ</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">33</span><span class="song-name">アンノウン・マザーグース</span><span class="song-artist">wowaka</span></div>
+          <div class="song-row"><span class="song-idx">34</span><span class="song-name">JANE DOE</span><span class="song-artist">米津玄師,宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">35</span><span class="song-name">空っぽ</span><span class="song-artist">れん</span></div>
+          <div class="song-row"><span class="song-idx">36</span><span class="song-name">KING</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">37</span><span class="song-name">夜夢のマジック</span><span class="song-artist">indigo la End</span></div>
+          <div class="song-row"><span class="song-idx">38</span><span class="song-name">好きだよ。〜100回の後悔〜</span><span class="song-artist">Sonar Pocket</span></div>
+        </div>
+      </div>
+
+      <!-- #02 -->
+      <div class="session" id="s0102">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#02</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">27 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0102')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">金木犀</span><span class="song-artist">くじら</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">ストリーミングハート</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">アンハッピーリフレイン</span><span class="song-artist">wowaka</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">さよならプリンセス</span><span class="song-artist">KAI</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">Poison 〜Japanese ver.-</span><span class="song-artist">Hazbin Hotel (ハズビン・ホテル)</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">レモネード</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">ロウワー</span><span class="song-artist">ぬゆり</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">服従製造ガール</span><span class="song-artist">れるりり</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">GURU</span><span class="song-artist">じん</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">ネコミミアーカイブ</span><span class="song-artist">農田命P</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">千本桜</span><span class="song-artist">黒うさ</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">Secret Answer</span><span class="song-artist">XYZ</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">アノニマスファンファレ</span><span class="song-artist">ツミキ</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">ゴールデンイエロー</span><span class="song-artist">FLG4</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">死んでしまったんだ</span><span class="song-artist">椎乃味醂</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">ドーナツホール</span><span class="song-artist">ハチ</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">BRAIN</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">狂乱 Hey Kids!!</span><span class="song-artist">THE ORAL CIGARETTES</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">サムライハート (Some Like It Hot!!)</span><span class="song-artist">SPYAIR</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">アイデンティティ</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">Beyond the way</span><span class="song-artist">Giga</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">Drop</span><span class="song-artist">HANA</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">Make It Out Alive</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">気まぐれロマンティック</span><span class="song-artist">いきものがかり</span></div>
+          <div class="song-row"><span class="song-idx">25</span><span class="song-name">残響散歌</span><span class="song-artist">Aimer</span></div>
+          <div class="song-row"><span class="song-idx">26</span><span class="song-name">天ノ弱</span><span class="song-artist">164</span></div>
+          <div class="song-row"><span class="song-idx">27</span><span class="song-name">残夢散歌</span><span class="song-artist">Aimer</span></div>
+        </div>
+      </div>
+
+      <!-- #03 -->
+      <div class="session" id="s0103">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#03</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">15 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0103')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">リバーシブル・キャンペーン</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">IRIS OUT</span><span class="song-artist">米津玄師</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">KING</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">BALALAIKA</span><span class="song-artist">9Lana</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">君の好きなうた</span><span class="song-artist">UVERworld</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">かくれんぼ</span><span class="song-artist">優里</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">Take what you want</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">Merry Go Round</span><span class="song-artist">GeG</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">Shadow Shadow</span><span class="song-artist">Azari</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">好きすぎて滅入！</span><span class="song-artist">MILK</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">チャンカパーナ</span><span class="song-artist">NEWS</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">ムーンライト伝説</span><span class="song-artist">DALI</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">おジャ魔女カーニバル!!</span><span class="song-artist">MAHO堂</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">ミラクルショッピング〜ドン・キホーテのテーマ〜</span><span class="song-artist">エドガー・サリヴァン</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">夏の半券</span><span class="song-artist">みさとP</span></div>
+        </div>
+      </div>
+
+      <!-- #04 -->
+      <div class="session" id="s0104">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#04</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">18 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0104')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">Side Dish</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">ハツコイソウ</span><span class="song-artist">FLG4</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">右肩の蝶</span><span class="song-artist">のりP</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">ジェヘナ</span><span class="song-artist">wotaku</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">HOME</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">Clock Strikes</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">Bedroom Warfare</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">Cry out</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">Deeper Deeper</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">愛してるのに、愛せない</span><span class="song-artist">AAA</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">ダーリン</span><span class="song-artist">Mrs. GREEN APPLE</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">THE OVER</span><span class="song-artist">UVERworld</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">好きすぎて滅入！</span><span class="song-artist">MILK</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">Heartache</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">マシュマロ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">Touch off</span><span class="song-artist">UVERworld</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">FOCUS</span><span class="song-artist">KIRA</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">Don't let me go</span><span class="song-artist">Nissy</span></div>
+        </div>
+      </div>
+
+      <!-- #05 -->
+      <div class="session" id="s0105">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#05</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">22 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0105')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">秒針</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">レモネード</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">夜道ディセイブ</span><span class="song-artist">じん</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">ヤンキーガール</span><span class="song-artist">トーマ</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">シャッター</span><span class="song-artist">優里</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">JANE DOE</span><span class="song-artist">米津玄師,宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">ビオトープ</span><span class="song-artist">wotaku</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">キメラ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">炎</span><span class="song-artist">LiSA</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">パラレルワールド</span><span class="song-artist">BAK</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">愛sing</span><span class="song-artist">BAK</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">song for you</span><span class="song-artist">EXILE</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">願〜HIBIKI〜</span><span class="song-artist">EXILE</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">FOCUS</span><span class="song-artist">KIRA</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">ハイエナ</span><span class="song-artist">MY FIRST STORY</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">真赤</span><span class="song-artist">My Hair is Bad</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">メリーゴーランド</span><span class="song-artist">優里</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">フライングゲット</span><span class="song-artist">AKB48</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">Fire◎Flower</span><span class="song-artist">Halyosy</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">Starduster</span><span class="song-artist">ジミーサムP</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">恋においで -Fall in love-</span><span class="song-artist">小林明子</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">アンサイズニア</span><span class="song-artist">ONE OK ROCK</span></div>
+        </div>
+      </div>
+
+      <!-- #06 -->
+      <div class="session" id="s0106">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#06</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">24 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0106')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">ノルカ//ソルカ</span><span class="song-artist">梓川</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">少女レイ</span><span class="song-artist">みきとP</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">マシュマロ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">コールボーイ</span><span class="song-artist">syudou</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">ラヴィ</span><span class="song-artist">すりぃ</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">マトリョシカ</span><span class="song-artist">ハチ</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">限界茶藍</span><span class="song-artist">鳥屋茶房</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">アンノウン・マザーグース</span><span class="song-artist">wowaka</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">orange</span><span class="song-artist">少年T</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">Calc.</span><span class="song-artist">ジミーサムP</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">雪の華</span><span class="song-artist">中島美嘉</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">愛のかたまり</span><span class="song-artist">KinKi Kids</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">点描の唄</span><span class="song-artist">Mrs. GREEN APPLE</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">ルカルカ★ナイトフィーバー</span><span class="song-artist">samfree</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">ワールドイズマイン</span><span class="song-artist">ryo</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">季節と私の話。</span><span class="song-artist">めいちゃん</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">リテラシー</span><span class="song-artist">wotaku</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">満ちてゆく</span><span class="song-artist">藤井 風</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">flos</span><span class="song-artist">R Sound Design</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">どうにかなっちゃいそう！</span><span class="song-artist">ツミキ</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">プロポーズ</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">蒲公子</span><span class="song-artist">Vaundy</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">藁、燦々</span><span class="song-artist">クリープハイプ</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">Newspeak</span><span class="song-artist">ぼくのりりっくのぼうよみ</span></div>
+        </div>
+      </div>
+
+      <!-- #07 -->
+      <div class="session" id="s0107">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#07</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">17 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0107')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">水星</span><span class="song-artist">Daoko</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">アスノヨラ</span><span class="song-artist">橙成班 / Orangestar</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">ディナーベル</span><span class="song-artist">はるまきごはん</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">さよならプリンセス</span><span class="song-artist">KAI</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">レモネード</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">SIRUP LOOP</span><span class="song-artist">SIRUP</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">ヘビースモーク</span><span class="song-artist">にしな</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">3BLUE</span><span class="song-artist">3House</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">ジレンマ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">Curtain Call feat.Taka</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">Oh...</span><span class="song-artist">Tadano Kaede</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">BALALAIKA</span><span class="song-artist">9Lana</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">天ノ弱</span><span class="song-artist">164</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">Eternal</span><span class="song-artist">赤西仁</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">未完成交響曲</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">REVIVER</span><span class="song-artist">MY FIRST STORY</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">ワガママ</span><span class="song-artist">Nissy</span></div>
+        </div>
+      </div>
+
+      <!-- #08 -->
+      <div class="session" id="s0108">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#08</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">38 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0108')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">snooze</span><span class="song-artist">wotaku</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">レモネード</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">ビリビリ</span><span class="song-artist">すりぃ</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">CQCQ</span><span class="song-artist">神様、僕は気づいてしまった</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">パラレルワールド</span><span class="song-artist">BAK</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">愛tears</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">誘導灯</span><span class="song-artist">梓川</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">ヤミタイガール</span><span class="song-artist">れるりり</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">Mighty Long Fall</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">シニカルナイトプラン</span><span class="song-artist">Ayase</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">絶頂讃歌</span><span class="song-artist">和ぬか</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">好きすぎて滅入！(好きすぎて滅入！)</span><span class="song-artist">MILK</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">余黒</span><span class="song-artist">いうどっと</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">ディナーベル</span><span class="song-artist">はるまきごはん</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">ゼロトーキング</span><span class="song-artist">はるまきごはん</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">WanteD! WanteD!</span><span class="song-artist">Mrs. GREEN APPLE</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">おやすみ泣き声、さよなら歌姫</span><span class="song-artist">クリープハイプ</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">ゴールデンイエロー</span><span class="song-artist">FLG4</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">Subtitle</span><span class="song-artist">Official髭男dism</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">ツキヨミ</span><span class="song-artist">King & Prince</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">ワタリドリ</span><span class="song-artist">[Alexandros]</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">車輪転生</span><span class="song-artist">まふまふ</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">ホシアイ</span><span class="song-artist"></span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">EYES, NOSE, LIPS(目鼻口) -Japanese ver.-</span><span class="song-artist">SOL (from BIGBANG)</span></div>
+          <div class="song-row"><span class="song-idx">25</span><span class="song-name">ヘビースモーク</span><span class="song-artist">にしな</span></div>
+          <div class="song-row"><span class="song-idx">26</span><span class="song-name">Heavenly White</span><span class="song-artist">EXILE</span></div>
+          <div class="song-row"><span class="song-idx">27</span><span class="song-name">クイーンオブハート</span><span class="song-artist">秦 昌69</span></div>
+          <div class="song-row"><span class="song-idx">28</span><span class="song-name">C.h.a.o.s.m.y.t.h.</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">29</span><span class="song-name">Hanabira</span><span class="song-artist">3House</span></div>
+          <div class="song-row"><span class="song-idx">30</span><span class="song-name">Seven feat. Latto</span><span class="song-artist">Jungkook</span></div>
+          <div class="song-row"><span class="song-idx">31</span><span class="song-name">GIFT</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">32</span><span class="song-name">#構とは</span><span class="song-artist">This is LAST</span></div>
+          <div class="song-row"><span class="song-idx">33</span><span class="song-name">愛を伝えたいだとか</span><span class="song-artist">あいみょん</span></div>
+          <div class="song-row"><span class="song-idx">34</span><span class="song-name">ノンブレス・オブリージュ</span><span class="song-artist">ピノキオピー</span></div>
+          <div class="song-row"><span class="song-idx">35</span><span class="song-name">ワールド・ランプシェード</span><span class="song-artist">buzzG</span></div>
+          <div class="song-row"><span class="song-idx">36</span><span class="song-name">JANE DOE</span><span class="song-artist">米津玄師,宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">37</span><span class="song-name">ワガママ</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">38</span><span class="song-name">完全感覚Dreamer</span><span class="song-artist">ONE OK ROCK</span></div>
+        </div>
+      </div>
+
+      <!-- #09 -->
+      <div class="session" id="s0109">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#09</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">24 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0109')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">ヤミタイガール</span><span class="song-artist">れるりり</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">BLUE</span><span class="song-artist">3House</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">雪の華</span><span class="song-artist">中島美嘉</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">クリスマス・イブ</span><span class="song-artist">山下達郎</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">Never Grow Up</span><span class="song-artist">ちゃんみな</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">テレキャスタービーボーイ</span><span class="song-artist">すりぃ</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">バニー</span><span class="song-artist">すりぃ</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">キシミダイ列車</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">隣界茶藍</span><span class="song-artist">鳥屋茶房</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">黒猫 〜Adult Black Cat〜</span><span class="song-artist">Acid Black Cherry</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">Wherever you are</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">欲望に満ちた青年団</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">ナツノオワリ</span><span class="song-artist">中西保志</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">さよならプリンセス</span><span class="song-artist">KAI</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">ドーナツホール</span><span class="song-artist">米津玄師</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">ハイエナ</span><span class="song-artist">MY FIRST STORY</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">First Love</span><span class="song-artist">宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">季節と私の話。</span><span class="song-artist">めいちゃん</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">君の知らない物語</span><span class="song-artist">supercell</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">JANE DOE</span><span class="song-artist">米津玄師,宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">MY FIRST STORY x HYDE</span><span class="song-artist"></span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">Side Dish</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">右肩の蝶</span><span class="song-artist">のりP</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">Lovers Again</span><span class="song-artist">EXILE</span></div>
+        </div>
+      </div>
+
+      <!-- #10 -->
+      <div class="session" id="s0110">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#10</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">12 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0110')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">ULTRA C feat. nqrse</span><span class="song-artist">Reol</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">Re:make</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">BRAIN</span><span class="song-artist">Kanaria</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">キツネノモド (Queen Fox)</span><span class="song-artist">Raon</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">神っぽいな</span><span class="song-artist">ピノキオピー</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">Ti Amo</span><span class="song-artist">EXILE</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">プリキン/ダンス</span><span class="song-artist">日向電工</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">ULTRA C feat. nqrse</span><span class="song-artist">Reol</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">猫脑的宇宙论</span><span class="song-artist">ナタン星人</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">パラレルワールド</span><span class="song-artist">BAK</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">HaruHaru -Japanese ver.-</span><span class="song-artist">BIGBANG</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">Black out</span><span class="song-artist">梓川</span></div>
+        </div>
+      </div>
+
+      <!-- #11 -->
+      <div class="session" id="s0111">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#11</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">23 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0111')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">完全感覚Dreamer</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">melt·bitter</span><span class="song-artist">さとうもか</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">Kiss Me Right</span><span class="song-artist">keshi</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">B.Y.S.</span><span class="song-artist">keshi</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">Newspeak</span><span class="song-artist">ぼくのりりっくのぼうよみ</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">最後の雨</span><span class="song-artist">中西保志</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">絶え間なく藍色</span><span class="song-artist">錦糸志司</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">Subtitle</span><span class="song-artist">Official髭男dism</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">IRIS OUT</span><span class="song-artist">米津玄師</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">ロストワンの号哭</span><span class="song-artist">Neru</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">幽霊東京</span><span class="song-artist">Ayase</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">GOATLIKE</span><span class="song-artist">Somari</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">コンタクトケース</span><span class="song-artist">Saucy Dog</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">アンサイズニア</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">ボッカデラベリタ</span><span class="song-artist">柊キライ</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">Don't let me go</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">ワガママ</span><span class="song-artist">Nissy</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">モザイクロール</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">Black out</span><span class="song-artist">梓川</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">藁、燦々</span><span class="song-artist">クリープハイプ</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">EYES, NOSE, LIPS(目鼻口) -Japanese ver.-</span><span class="song-artist">SOL (from BIGBANG)</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">beside you</span><span class="song-artist">keshi</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">大阪LOVER</span><span class="song-artist">DREAMS COME TRUE</span></div>
+        </div>
+      </div>
+
+      <!-- #12 -->
+      <div class="session" id="s0112">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#12</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">25 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0112')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">Black out</span><span class="song-artist">梓川</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">おこちゃま戦争</span><span class="song-artist">Giga</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">ノルカ//ソルカ</span><span class="song-artist">梓川</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">DUNGHILL</span><span class="song-artist">ZliEK</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">デビルじゃないもん</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">秒針</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">キメラ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">金曜日のおはよう</span><span class="song-artist">HoneyWorks</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">メランコリック</span><span class="song-artist">Junky</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">欲望に満ちた青年団</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">BALALAIKA</span><span class="song-artist">9Lana</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">欧北の少年</span><span class="song-artist">kemu</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">ハツコイソウ</span><span class="song-artist">FLG4</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">〜EXILE</span><span class="song-artist"></span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">サムライハート (Some Like It Hot!!)</span><span class="song-artist">SPYAIR</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">絡</span><span class="song-artist">Saucy Dog</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">Never Grow Up</span><span class="song-artist">ちゃんみな</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">Beyond the way</span><span class="song-artist">Giga</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">ウエディング</span><span class="song-artist">音田雅則</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">アンノウン・マザーグース</span><span class="song-artist">wowaka</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">堕落な天使のテーゼ</span><span class="song-artist">高橋洋子</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">ワールド・ランプシェード</span><span class="song-artist">buzzG</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">unravel</span><span class="song-artist">TK from 凛として時雨</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">IMPACT</span><span class="song-artist">UVERworld</span></div>
+          <div class="song-row"><span class="song-idx">25</span><span class="song-name">115万キロのフィルム</span><span class="song-artist">Official髭男dism</span></div>
+        </div>
+      </div>
+
+      <!-- #13 -->
+      <div class="session" id="s0113">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#13</span>
+            <div class="session-info">
+              <div class="session-title">歌枠</div>
+              <div class="session-count">24 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0113')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">右肩の蝶</span><span class="song-artist">のりP</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">Beyond the way</span><span class="song-artist">Giga</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">Loser</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">Tokyo</span><span class="song-artist">清水翔太</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">Heavenly White</span><span class="song-artist">EXILE</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">100degrees</span><span class="song-artist">THE RAMPAGE FROM EXILE TRIBE</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">ヒバナ</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">メランコリック</span><span class="song-artist">Junky</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">ローリンガール</span><span class="song-artist">wowaka</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">モエチャッカファイア</span><span class="song-artist">弐誠</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">Secret Answer</span><span class="song-artist">XYZ</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">レゾンデイトル・カレイドスコウプ</span><span class="song-artist">ツミキ</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">ルカルカ★ナイトフィーバー</span><span class="song-artist">samfree</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">イケナイ太陽</span><span class="song-artist">ORANGE RANGE</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">HOT LIMIT</span><span class="song-artist">T.M.Revolution</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">バンダヒーロー</span><span class="song-artist">ハチ</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">Snow halation</span><span class="song-artist">μ's</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">ビビデバ</span><span class="song-artist">星街すいせい</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">とても素敵な六月でした</span><span class="song-artist">Eight</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">モニタリング</span><span class="song-artist">DECO*27</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">夢をかなえてドラえもん</span><span class="song-artist">mao,ひまわりキッズ</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">ミラクルショッピング 〜ドン・キホーテのテーマ〜</span><span class="song-artist">エドガー・サリヴァン</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">Deeper Deeper</span><span class="song-artist">ONE OK ROCK</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">unravel</span><span class="song-artist">TK from 凛として時雨</span></div>
+        </div>
+      </div>
+
+      <!-- #14 1月31日ラスト配信 -->
+      <div class="session" id="s0114">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">#14</span>
+            <div class="session-info">
+              <div class="session-title">歌枠（1月31日・ラスト配信）</div>
+              <div class="session-count">26 songs</div>
+            </div>
+          </div>
+          <button class="session-toggle-btn" onclick="toggleSession('s0114')">▾</button>
+        </div>
+        <div class="song-list">
+          <div class="song-row"><span class="song-idx">1</span><span class="song-name">絶対零度</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">2</span><span class="song-name">プロポーズ</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">3</span><span class="song-name">Overdose</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">4</span><span class="song-name">金木犀</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">5</span><span class="song-name">コルブア (Yurufuwa)</span><span class="song-artist">センラ×nqrse×luz</span></div>
+          <div class="song-row"><span class="song-idx">6</span><span class="song-name">WAVE</span><span class="song-artist">niki (-3)</span></div>
+          <div class="song-row"><span class="song-idx">7</span><span class="song-name">丸の内サディスティック</span><span class="song-artist">椎名林檎</span></div>
+          <div class="song-row"><span class="song-idx">8</span><span class="song-name">告白</span><span class="song-artist">MY FIRST STORY</span></div>
+          <div class="song-row"><span class="song-idx">9</span><span class="song-name">Love Letter</span><span class="song-artist">MY FIRST STORY</span></div>
+          <div class="song-row"><span class="song-idx">10</span><span class="song-name">ニア</span><span class="song-artist">夏代孝明</span></div>
+          <div class="song-row"><span class="song-idx">11</span><span class="song-name">夜明けと蛍</span><span class="song-artist">n-buna</span></div>
+          <div class="song-row"><span class="song-idx">12</span><span class="song-name">メロディー</span><span class="song-artist">玉置浩二</span></div>
+          <div class="song-row"><span class="song-idx">13</span><span class="song-name">メロディー</span><span class="song-artist">玉置りラニ</span></div>
+          <div class="song-row"><span class="song-idx">14</span><span class="song-name">セレナーデ</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">15</span><span class="song-name">レモネード</span><span class="song-artist">nqrse</span></div>
+          <div class="song-row"><span class="song-idx">16</span><span class="song-name">命のユースティティア</span><span class="song-artist">Neru</span></div>
+          <div class="song-row"><span class="song-idx">17</span><span class="song-name">セレナーデ</span><span class="song-artist">なとり</span></div>
+          <div class="song-row"><span class="song-idx">18</span><span class="song-name">ディナーベル</span><span class="song-artist">はるまきごはん</span></div>
+          <div class="song-row"><span class="song-idx">19</span><span class="song-name">One Last Kiss</span><span class="song-artist">宇多田ヒカル</span></div>
+          <div class="song-row"><span class="song-idx">20</span><span class="song-name">Golden</span><span class="song-artist">HUNTR/X (-3)</span></div>
+          <div class="song-row"><span class="song-idx">21</span><span class="song-name">臨界ダイバー / うみろ (こじろー) feat. flower</span><span class="song-artist">(-3)</span></div>
+          <div class="song-row"><span class="song-idx">22</span><span class="song-name">ミカヅキ</span><span class="song-artist">さユり (-3)</span></div>
+          <div class="song-row"><span class="song-idx">23</span><span class="song-name">夢幻</span><span class="song-artist">MY FIRST STORY x HYDE</span></div>
+          <div class="song-row"><span class="song-idx">24</span><span class="song-name">リテラシー</span><span class="song-artist">wotaku</span></div>
+          <div class="song-row"><span class="song-idx">25</span><span class="song-name">物の怪の類</span><span class="song-artist">めいちゃん</span></div>
+          <div class="song-row"><span class="song-idx">26</span><span class="song-name">unravel</span><span class="song-artist">TK from 凛として時雨</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ 2月〜5月はプレースホルダー ══ -->
+  <div class="month-block" id="m02">
+    <div class="month-toggle" onclick="toggleMonth('m02')">
+      <div>
+        <div class="month-name">February — 2月</div>
+        <div class="month-meta">coming soon</div>
+      </div>
+      <span class="month-chevron">▾</span>
+    </div>
+    <div class="month-body">
+      <div class="session">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">—</span>
+            <div class="session-info">
+              <div class="session-title" style="color:var(--text3);">セットリストを追加予定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="month-block" id="m03">
+    <div class="month-toggle" onclick="toggleMonth('m03')">
+      <div>
+        <div class="month-name">March — 3月</div>
+        <div class="month-meta">coming soon</div>
+      </div>
+      <span class="month-chevron">▾</span>
+    </div>
+    <div class="month-body">
+      <div class="session">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">—</span>
+            <div class="session-info">
+              <div class="session-title" style="color:var(--text3);">セットリストを追加予定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="month-block" id="m04">
+    <div class="month-toggle" onclick="toggleMonth('m04')">
+      <div>
+        <div class="month-name">April — 4月</div>
+        <div class="month-meta">coming soon</div>
+      </div>
+      <span class="month-chevron">▾</span>
+    </div>
+    <div class="month-body">
+      <div class="session">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">—</span>
+            <div class="session-info">
+              <div class="session-title" style="color:var(--text3);">セットリストを追加予定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="month-block" id="m05">
+    <div class="month-toggle" onclick="toggleMonth('m05')">
+      <div>
+        <div class="month-name">May — 5月</div>
+        <div class="month-meta">coming soon</div>
+      </div>
+      <span class="month-chevron">▾</span>
+    </div>
+    <div class="month-body">
+      <div class="session">
+        <div class="session-header">
+          <div class="session-left">
+            <span class="session-num">—</span>
+            <div class="session-info">
+              <div class="session-title" style="color:var(--text3);">セットリストを追加予定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  liv's Setlist Records · 2026 · updated regularly
+</footer>
+
+<script>
+  function toggleMonth(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+  function toggleSession(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    const btn = el.querySelector('.session-toggle-btn');
+    if (btn) btn.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+  document.getElementById('m01').classList.add('open');
+</script>
+</body>
+</html>
