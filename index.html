@@ -1231,7 +1231,7 @@
     <div class="month-body">
 
       <!-- #01 2月初配信 -->
-      <div class="session" id="s0101">
+      <div class="session" id="s0201">
         <div class="session-header">
           <div class="session-left">
             <span class="session-num">#01</span>
@@ -1240,7 +1240,7 @@
               <div class="session-count">25 songs</div>
             </div>
           </div>
-          <button class="session-toggle-btn" onclick="toggleSession('s0101')">▾</button>
+          <button class="session-toggle-btn" onclick="toggleSession('s0201')">▾</button>
         </div>
         <div class="song-list">
          <div class="song-row"><span class="song-idx">1</span><span class="song-name">ハッピーシンセサイザ</span><span class="song-artist">EasyPop</span></div>
@@ -1380,3 +1380,16 @@
   });
 </script>
 
+<script>
+  // ▼ 全体の months
+  const totalMonths = document.querySelectorAll('.month-block').length;
+  document.querySelector('.stat-l:contains("months")').previousElementSibling.textContent = totalMonths;
+
+  // ▼ 全体の sessions
+  const totalSessions = document.querySelectorAll('.session-block').length;
+  document.querySelector('.stat-l:contains("sessions")').previousElementSibling.textContent = totalSessions;
+
+  // ▼ 全体の songs total
+  const totalSongs = document.querySelectorAll('.song-row').length;
+  document.querySelector('.stat-l:contains("songs total")').previousElementSibling.textContent = totalSongs;
+</script>
