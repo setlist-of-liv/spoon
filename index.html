@@ -1331,15 +1331,38 @@
 </html>
 
 <script>
-  // 月ごとの曲数を自動計算
+  // ▼ 各月の sessions / songs を自動計算
   document.querySelectorAll('.month-block').forEach(block => {
+    const sessions = block.querySelectorAll('.session-block').length;
     const songs = block.querySelectorAll('.song-row').length;
-    const meta = block.querySelector('.month-meta');
 
+    const meta = block.querySelector('.month-meta');
     if (meta) {
-      const text = meta.textContent;
-      const updated = text.replace(/(\d+)\s*songs/, `${songs} songs`);
-      meta.textContent = updated;
+      meta.textContent = `${sessions} sessions · ${songs} songs`;
     }
   });
+
+  // ▼ 全体の months
+  const totalMonths = document.querySelectorAll('.month-block').length;
+  document.querySelector('.stat-l:contains("months")').previousElementSibling.textContent = totalMonths;
+
+  // ▼ 全体の sessions
+  const totalSessions = document.querySelectorAll('.session-block').length;
+  document.querySelector('.stat-l:contains("sessions")').previousElementSibling.textContent = totalSessions;
+
+  // ▼ 全体の songs total
+  const totalSongs = document.querySelectorAll('.song-row').length;
+  document.querySelector('.stat-l:contains("songs total")').previousElementSibling.textContent = totalSongs;
+
+  // ▼ updating（Webサイトの最終更新日）
+  const last = new Date(document.lastModified);
+  const y = last.getFullYear();
+  const m = String(last.getMonth() + 1).padStart(2, '0');
+  const d = String(last.getDate()).padStart(2, '0');
+  const formatted = `${y}/${m}/${d}`;
+
+  const updatingLabel = document.querySelector('.stat-l:contains("updating")');
+  if (updatingLabel) {
+    updatingLabel.previousElementSibling.innerHTML = `<span class="accent">●</span> ${formatted}`;
+  }
 </script>
