@@ -400,13 +400,13 @@
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat">
+  <!-- <div class="stat">
     <div class="stat-n">5</div>
     <div class="stat-l">months</div>
-  </div>
+  </div> -->
   <div class="stat">
     <div class="stat-n">14</div>
-    <div class="stat-l">sessions</div>
+    <div class="stat-l">streams</div>
   </div>
   <div class="stat">
     <div class="stat-n">279</div>
@@ -428,7 +428,7 @@
     <div class="month-toggle" onclick="toggleMonth('m01')">
       <div>
         <div class="month-name">January — 1月</div>
-        <div class="month-meta">22 sessions · 279 songs</div>
+        <div class="month-meta">22 streams · 279 songs</div>
       </div>
       <span class="month-chevron">▾</span>
     </div>
@@ -1224,7 +1224,7 @@
     <div class="month-toggle" onclick="toggleMonth('m02')">
       <div>
         <div class="month-name">February — 2月</div>
-        <div class="month-meta">22 sessions · 279 songs</div>
+        <div class="month-meta">22 streams · 279 songs</div>
       </div>
       <span class="month-chevron">▾</span>
     </div>
@@ -1382,12 +1382,12 @@
 
 <script>
   // ▼ 全体の months
-  const totalMonths = document.querySelectorAll('.month-block').length;
-  document.querySelector('.stat-l:contains("months")').previousElementSibling.textContent = totalMonths;
+  // const totalMonths = document.querySelectorAll('.month-block').length;
+  // document.querySelector('.stat-l:contains("months")').previousElementSibling.textContent = totalMonths;
 
-  // ▼ 全体の sessions
-  const totalSessions = document.querySelectorAll('.session-block').length;
-  document.querySelector('.stat-l:contains("sessions")').previousElementSibling.textContent = totalSessions;
+  // ▼ 全体の streams
+  const totalstreams = document.querySelectorAll('.session-block').length;
+  document.querySelector('.stat-l:contains("streams")').previousElementSibling.textContent = totalstreams;
 
   // ▼ 全体の songs total
   const totalSongs = document.querySelectorAll('.song-row').length;
