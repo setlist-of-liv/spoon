@@ -181,6 +181,22 @@
   }
   .month-nav-item:hover { border-color: #555; color: var(--text2); }
   .month-nav-item.active { border-color: var(--text2); color: var(--text); background: var(--bg3); }
+  .month-nav-divider {
+    width: 1px;
+    background: var(--border2);
+    align-self: stretch;
+    margin: 0 4px;
+  }
+  .replay-filter-btn { border-color: rgba(255,107,53,0.3); color: var(--spoon) !important; gap: 6px; }
+  .replay-filter-btn:hover { border-color: var(--spoon) !important; }
+  .replay-filter-btn.active { background: var(--spoon-dim) !important; border-color: var(--spoon) !important; color: var(--spoon) !important; }
+  .spoon-dot-inline {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--spoon);
+    flex-shrink: 0;
+  }
 
   /* ── SCROLL TO TOP ── */
   .scroll-top {
@@ -476,6 +492,8 @@
   <a class="month-nav-item" onclick="openMonth('m03', this)">3月</a>
   <a class="month-nav-item" onclick="openMonth('m04', this)">4月</a>
   <a class="month-nav-item" onclick="openMonth('m05', this)">5月</a>
+  <span class="month-nav-divider"></span>
+  <a class="month-nav-item replay-filter-btn" onclick="toggleReplayFilter(this)"><span class="spoon-dot-inline"></span>replay のみ</a>
 </div>
 
 <!-- SCROLL TO TOP -->
@@ -4553,12 +4571,17 @@
 
   // 月ナビボタン：押した月だけ開き、他は閉じる
   function openMonth(id, btn) {
-    document.querySelectorAll('.month-block').forEach(block => {
-      block.classList.remove('open');
-    });
-    document.querySelectorAll('.month-nav-item').forEach(item => {
-      item.classList.remove('active');
-    });
+    // replayフィルターが入っていたら解除
+    if (replayFilterOn) {
+      replayFilterOn = false;
+      document.querySelector('.replay-filter-btn')?.classList.remove('active');
+      document.querySelectorAll('.month-block').forEach(b => {
+        b.style.display = '';
+        b.querySelectorAll('.session').forEach(s => s.style.display = '');
+      });
+    }
+    document.querySelectorAll('.month-block').forEach(block => block.classList.remove('open'));
+    document.querySelectorAll('.month-nav-item').forEach(item => item.classList.remove('active'));
     const target = document.getElementById(id);
     target.classList.add('open');
     btn.classList.add('active');
@@ -4571,6 +4594,38 @@
     el.classList.toggle('open');
     const btn = el.querySelector('.session-toggle-btn');
     if (btn) btn.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  // replay フィルター
+  let replayFilterOn = false;
+  function toggleReplayFilter(btn) {
+    replayFilterOn = !replayFilterOn;
+    btn.classList.toggle('active', replayFilterOn);
+
+    document.querySelectorAll('.month-block').forEach(block => {
+      if (!replayFilterOn) {
+        // フィルター解除：全部戻す
+        block.style.display = '';
+        block.querySelectorAll('.session').forEach(s => s.style.display = '');
+        return;
+      }
+      // replayリンクがあるセッションだけ表示
+      let hasAny = false;
+      block.querySelectorAll('.session').forEach(session => {
+        const hasReplay = !!session.querySelector('.session-title a');
+        session.style.display = hasReplay ? '' : 'none';
+        if (hasReplay) hasAny = true;
+      });
+      // replayが1件もない月ごと非表示
+      block.style.display = hasAny ? '' : 'none';
+      // replayがある月は開く
+      if (hasAny) block.classList.add('open');
+    });
+
+    // 月ナビの月ボタンのactiveをリセット
+    if (replayFilterOn) {
+      document.querySelectorAll('.month-nav-item:not(.replay-filter-btn)').forEach(i => i.classList.remove('active'));
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
