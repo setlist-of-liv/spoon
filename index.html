@@ -4652,9 +4652,11 @@
   
   document.addEventListener('DOMContentLoaded', () => {
   
-    // ▼ スマホ対応：文字を入力した瞬間に検索が動く
     const searchInput = document.getElementById("searchInput");
+  
     if (searchInput) {
+  
+      // ▼ スマホ対応：文字を入力した瞬間に検索が動く
       searchInput.addEventListener("input", () => {
         searchContent();
       });
@@ -4669,7 +4671,6 @@
     }
   
   });
-
   // replay フィルター
   let replayFilterOn = false;
   function toggleReplayFilter(btn) {
