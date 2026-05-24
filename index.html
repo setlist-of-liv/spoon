@@ -494,14 +494,20 @@
   <a class="month-nav-item" onclick="openMonth('m05', this)">5月</a> -->
  
  <!-- SEARCH NAV -->
- <div class="search-wrap">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="🔍Search songs / streams..."
-    onkeyup="searchContent()"
-  />
-</div>
+ <div class="top-controls">
+   <div class="search-wrap">
+     <input
+       type="text"
+       id="searchInput"
+       placeholder="Search songs / streams..."
+       onkeyup="searchContent()"
+     />
+   </div>
+ 
+   <button class="replay-filter">
+     replay available
+   </button>
+ </div>
   <span class="month-nav-divider"></span>
   <a class="month-nav-item replay-filter-btn" onclick="toggleReplayFilter(this)"><span class="spoon-dot-inline"></span> replayあり</a>
 </div>
@@ -4612,13 +4618,13 @@
       .value
       .toLowerCase();
   
-    const sessions = document.querySelectorAll(".session");
+    const sessions = document.querySelectorAll(".session-card");
   
     sessions.forEach(session => {
       const text = session.innerText.toLowerCase();
   
       if (text.includes(input)) {
-        session.style.display = "";
+        session.style.display = "block";
       } else {
         session.style.display = "none";
       }
