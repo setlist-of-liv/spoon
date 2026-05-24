@@ -486,12 +486,22 @@
 </div>
 
 <!-- MONTH NAV -->
-<div class="month-nav">
+<!-- <div class="month-nav">
   <a class="month-nav-item" onclick="openMonth('m01', this)">1月</a>
   <a class="month-nav-item" onclick="openMonth('m02', this)">2月</a>
   <a class="month-nav-item" onclick="openMonth('m03', this)">3月</a>
   <a class="month-nav-item" onclick="openMonth('m04', this)">4月</a>
-  <a class="month-nav-item" onclick="openMonth('m05', this)">5月</a>
+  <a class="month-nav-item" onclick="openMonth('m05', this)">5月</a> -->
+ 
+ <!-- SEARCH NAV -->
+ <div class="search-wrap">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="🔍Search songs / streams..."
+    onkeyup="searchContent()"
+  />
+</div>
   <span class="month-nav-divider"></span>
   <a class="month-nav-item replay-filter-btn" onclick="toggleReplayFilter(this)"><span class="spoon-dot-inline"></span> replayあり</a>
 </div>
@@ -4595,7 +4605,25 @@
     const btn = el.querySelector('.session-toggle-btn');
     if (btn) btn.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
   }
-
+ //検索機能追加
+  function searchContent() {
+    const input = document
+      .getElementById("searchInput")
+      .value
+      .toLowerCase();
+  
+    const sessions = document.querySelectorAll(".session");
+  
+    sessions.forEach(session => {
+      const text = session.innerText.toLowerCase();
+  
+      if (text.includes(input)) {
+        session.style.display = "";
+      } else {
+        session.style.display = "none";
+      }
+    });
+  }
   // replay フィルター
   let replayFilterOn = false;
   function toggleReplayFilter(btn) {
