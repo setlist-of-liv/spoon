@@ -4475,8 +4475,70 @@
       </div>
     </div>
   </div>
-         
+
+ <section class="countdown-section">
+  <div class="countdown-title">12 months consecutive subscription🥳</div>
+    <div class="countdown-sub">まであと</div>
+    <div id="countdown"></div>
+  </section>
+
+  <style>
+    .countdown-section {
+      margin: 40px 0;
+      padding: 25px;
+      text-align: center;
+      border: 2px solid #a56eff;
+      border-radius: 12px;
+      background: rgba(165, 110, 255, 0.08);
+    }
+
+    .countdown-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #a56eff;
+      margin-bottom: 6px;
+    }
+
+    .countdown-sub {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+    #countdown {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #d3b3ff;
+      letter-spacing: 1px;
+    }
+  </style>
+
+ 
 </main>
+ 
+<script>
+  function updateCountdown() {
+    const target = new Date("2026-06-14T00:00:00"); // ← ここが日付設定！
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById("countdown").textContent = "Completed!";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").textContent =
+      `${days} days ${hours} hours ${mins} mins ${secs} secs`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
 
 <footer>
   liv's Setlist Records · 2026 · updated regularly
