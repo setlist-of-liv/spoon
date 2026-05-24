@@ -4630,7 +4630,7 @@
     const btn = el.querySelector('.session-toggle-btn');
     if (btn) btn.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
   }
- //検索機能追加
+  //検索機能追加
   function searchContent() {
     const input = document
       .getElementById("searchInput")
@@ -4649,6 +4649,19 @@
       }
     });
   }
+  
+  // ▼ スマホ対応：文字を入力した瞬間に検索が動く
+  document.getElementById("searchInput").addEventListener("input", function () {
+    searchContent();
+  });
+  
+  // ▼ PC対応：Enterキーでも検索が動く
+  document.getElementById("searchInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchContent();
+    }
+  });
   // replay フィルター
   let replayFilterOn = false;
   function toggleReplayFilter(btn) {
