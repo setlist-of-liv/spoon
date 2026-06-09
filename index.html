@@ -5142,11 +5142,39 @@
   // ── 検索 ──
   let searchActive = false;
 
+  // 全月ブロック・セッションを閉じるユーティリティ
+  function closeAllBlocks() {
+    document.querySelectorAll('.month-block').forEach(b => {
+      b.classList.remove('open');
+      b.style.display = '';
+      b.querySelectorAll('.session').forEach(s => {
+        s.classList.remove('open');
+        s.style.display = '';
+        const btn = s.querySelector('.session-toggle-btn');
+        if (btn) btn.style.transform = '';
+      });
+    });
+    document.querySelectorAll('.month-nav-item:not(.replay-filter-btn)').forEach(i => i.classList.remove('active'));
+  }
+
   function clearSearch() {
     const input = document.getElementById('searchInput');
     if (input) input.value = '';
     searchActive = false;
-    runSearch('');
+    // ハイライトと表示を戻す
+    document.querySelectorAll('.song-row').forEach(row => {
+      row.style.display = '';
+      row.classList.remove('search-hit');
+      const nameEl   = row.querySelector('.song-name');
+      const artistEl = row.querySelector('.song-artist');
+      if (nameEl)   nameEl.innerHTML = nameEl.textContent;
+      if (artistEl) artistEl.innerHTML = artistEl.textContent;
+    });
+    document.getElementById('searchClear')?.classList.remove('visible');
+    const meta = document.getElementById('searchMeta');
+    if (meta) meta.textContent = '';
+    // 全部閉じる
+    closeAllBlocks();
   }
 
   function runSearch(query) {
@@ -5156,6 +5184,13 @@
     if (searchActive && replayFilterOn) {
       replayFilterOn = false;
       document.querySelector('.replay-filter-btn')?.classList.remove('active');
+    }
+    // 検索クリア時は closeAllBlocks 経由で処理するのでここでは return
+    if (!searchActive) {
+      closeAllBlocks();
+      const meta = document.getElementById('searchMeta');
+      if (meta) meta.textContent = '';
+      return;
     }
     let hitSongs = 0;
     document.querySelectorAll('.month-block').forEach(block => {
@@ -5167,13 +5202,6 @@
           const artistEl = row.querySelector('.song-artist');
           const name   = nameEl?.textContent   || '';
           const artist = artistEl?.textContent || '';
-          if (!searchActive) {
-            row.style.display = '';
-            row.classList.remove('search-hit');
-            if (nameEl)   nameEl.innerHTML   = name;
-            if (artistEl) artistEl.innerHTML = artist;
-            return;
-          }
           const hit = name.toLowerCase().includes(q) || artist.toLowerCase().includes(q);
           row.style.display = hit ? '' : 'none';
           row.classList.toggle('search-hit', hit);
@@ -5187,19 +5215,24 @@
             if (artistEl) artistEl.innerHTML = artist;
           }
         });
-        session.style.display = (!searchActive || sessionHit) ? '' : 'none';
-        if (searchActive && sessionHit) {
+        session.style.display = sessionHit ? '' : 'none';
+        if (sessionHit) {
           session.classList.add('open');
           const btn = session.querySelector('.session-toggle-btn');
           if (btn) btn.style.transform = 'rotate(180deg)';
+        } else {
+          session.classList.remove('open');
+          const btn = session.querySelector('.session-toggle-btn');
+          if (btn) btn.style.transform = '';
         }
         if (sessionHit) blockHit = true;
       });
-      block.style.display = (!searchActive || blockHit) ? '' : 'none';
-      if (searchActive && blockHit) block.classList.add('open');
+      block.style.display = blockHit ? '' : 'none';
+      if (blockHit) block.classList.add('open');
+      else block.classList.remove('open');
     });
     const meta = document.getElementById('searchMeta');
-    if (meta) meta.textContent = searchActive ? hitSongs + ' songs found' : '';
+    if (meta) meta.textContent = hitSongs + ' songs found';
   }
 
   function highlight(text, query) {
@@ -5213,12 +5246,13 @@
   function toggleReplayFilter(btn) {
     replayFilterOn = !replayFilterOn;
     btn.classList.toggle('active', replayFilterOn);
+    if (!replayFilterOn) {
+      // 2回目（オフ）→ 全部閉じる
+      closeAllBlocks();
+      return;
+    }
+    // 1回目（オン）→ replayありのみ表示
     document.querySelectorAll('.month-block').forEach(block => {
-      if (!replayFilterOn) {
-        block.style.display = '';
-        block.querySelectorAll('.session').forEach(s => s.style.display = '');
-        return;
-      }
       let hasAny = false;
       block.querySelectorAll('.session').forEach(session => {
         const hasReplay = !!session.querySelector('.session-title a');
@@ -5228,18 +5262,14 @@
       block.style.display = hasAny ? '' : 'none';
       if (hasAny) block.classList.add('open');
     });
-    if (replayFilterOn) {
-      document.querySelectorAll('.month-nav-item:not(.replay-filter-btn)').forEach(i => i.classList.remove('active'));
-    }
+    document.querySelectorAll('.month-nav-item:not(.replay-filter-btn)').forEach(i => i.classList.remove('active'));
   }
 
-  // ── 検索窓・クリアボタン以外をタッチしたら月を閉じる ──
+  // ── 検索窓・クリアボタン以外をタッチしたら全て閉じる ──
   document.addEventListener('click', (e) => {
-    if (!searchActive) return; // 検索中でない時は何もしない
+    if (!searchActive) return;
     const inSearch = e.target.closest('#searchInput, #searchClear, .search-wrap');
-    if (!inSearch) {
-      clearSearch();
-    }
+    if (!inSearch) clearSearch();
   });
 
   // ── DOMContentLoaded ──
