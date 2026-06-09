@@ -364,23 +364,68 @@
   }
   .session.open .song-list { display: block; }
 
-   /* 左に検索、右にreplay */
+   /* ── TOP CONTROLS（検索 + replayボタン） ── */
   .top-controls {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 30px; /* ← ここがポイント！左右に余白を作る */
-    margin-top: 20px;
+    gap: 10px;
+    padding: 0.85rem 2rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
   }
-  
-  /* 検索窓をreplayと同じサイズにする */
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg1);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    transition: border-color 0.2s;
+  }
+  .search-wrap:focus-within { border-color: #555; }
+  .search-icon { font-size: 13px; flex-shrink: 0; }
   .search-wrap input {
-    height: 36px;
-    padding: 0 12px;
-    font-size: 0.8rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 180px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+  }
+  .search-wrap input::placeholder { color: var(--text3); }
+  .search-clear {
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    display: none;
+    line-height: 1;
+  }
+  .search-clear.visible { display: block; }
+  .search-clear:hover { color: var(--text2); }
+  .search-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    white-space: nowrap;
+  }
+  .song-row.search-hit .song-name { color: #fff; }
+  .song-row.search-hit .song-artist { color: var(--text2); }
+  mark {
+    background: rgba(200,255,0,0.25);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
   }
 
   /* .song-row {
@@ -524,21 +569,17 @@
   <a class="month-nav-item" onclick="openMonth('m04', this)">4月</a>
   <a class="month-nav-item" onclick="openMonth('m05', this)">5月</a> -->
  
- <!-- SEARCH NAV（検索機能） -->
+<!-- SEARCH NAV -->
 <div class="top-controls">
-
-  <!-- <div class="search-wrap">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="🔍Search songs / streams..."
-    />
-  </div> -->
-
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="曲名・アーティスト名で検索..." autocomplete="off" />
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+  </div>
+  <div class="search-meta" id="searchMeta"></div>
   <a class="month-nav-item replay-filter-btn" onclick="toggleReplayFilter(this)">
     <span class="spoon-dot-inline"></span> replayあり
   </a>
-
 </div>
 
 
@@ -4780,6 +4821,38 @@
     <div id="countdown"></div>
   </section>
 
+  <!-- SUBSCRIPTION BLOCK -->
+  <div class="sub-block" id="subBlock">
+    <button class="sub-toggle" onclick="toggleSubBlock()">
+      <span class="sub-toggle-label">🎁 subscription</span>
+      <span class="sub-toggle-chevron" id="subChevron">▾</span>
+    </button>
+    <div class="sub-body" id="subBody">
+      <!-- カウントダウン日時設定 -->
+      <div class="sub-date-input-wrap">
+        <span class="sub-date-label">TARGET DATE</span>
+        <input type="datetime-local" class="sub-date-input" id="subDateInput" />
+        <button class="sub-date-set-btn" onclick="setSubCountdown()">SET</button>
+      </div>
+      <!-- カウントダウン -->
+      <div class="sub-countdown-wrap">
+        <div class="sub-countdown-title" id="subCountdownTitle">日時を設定してください</div>
+        <div class="sub-countdown-display" id="subCountdown">--</div>
+      </div>
+      <!-- 動画 -->
+      <div class="sub-video-wrap">
+        <video
+          id="subVideo"
+          src="video.mp4"
+          controls
+          playsinline
+          preload="metadata"
+        ></video>
+        <p class="sub-video-note">※ HTMLと同じフォルダに <code>video.mp4</code> を置いてください</p>
+      </div>
+    </div>
+  </div>
+
   <style>
     .countdown-section {
       margin: 20px 0;
@@ -4811,47 +4884,196 @@
     }
   </style>
 
- 
+  <style>
+    /* ── SUBSCRIPTION BLOCK ── */
+    .sub-block {
+      margin: 1.5rem 0 0.5rem;
+      border: 1px solid #2a1f3d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .sub-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      background: rgba(165,110,255,0.07);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sub-toggle:hover { background: rgba(165,110,255,0.12); }
+    .sub-block.open .sub-toggle { background: rgba(165,110,255,0.1); }
+    .sub-toggle-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #a56eff;
+      letter-spacing: 0.05em;
+    }
+    .sub-toggle-chevron {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: #a56eff;
+      transition: transform 0.3s ease;
+    }
+    .sub-block.open .sub-toggle-chevron { transform: rotate(180deg); }
+    .sub-body {
+      display: none;
+      padding: 1.25rem;
+      background: rgba(165,110,255,0.04);
+      border-top: 1px solid #2a1f3d;
+    }
+    .sub-block.open .sub-body { display: block; }
+
+    /* カウントダウン */
+    .sub-countdown-wrap {
+      text-align: center;
+      margin-bottom: 1.25rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #2a1f3d;
+      border-radius: 6px;
+      background: rgba(165,110,255,0.06);
+    }
+    .sub-countdown-title {
+      font-size: 12px;
+      color: #a56eff;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .sub-countdown-display {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: #d3b3ff;
+      letter-spacing: 1px;
+    }
+    /* 日時入力エリア */
+    .sub-date-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .sub-date-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .sub-date-input {
+      background: var(--bg3);
+      border: 1px solid #2a1f3d;
+      border-radius: 6px;
+      color: #d3b3ff;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .sub-date-input:focus { outline: none; border-color: #a56eff; }
+    .sub-date-set-btn {
+      background: rgba(165,110,255,0.15);
+      border: 1px solid #a56eff;
+      border-radius: 6px;
+      color: #a56eff;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sub-date-set-btn:hover { background: rgba(165,110,255,0.25); }
+
+    /* 動画 */
+    .sub-video-wrap { margin-top: 0.5rem; }
+    .sub-video-wrap video {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #2a1f3d;
+      background: #000;
+      display: block;
+    }
+    .sub-video-note {
+      font-size: 10px;
+      color: #444;
+      margin-top: 6px;
+      font-family: 'Space Mono', monospace;
+    }
+    .sub-video-note code {
+      color: #666;
+      background: var(--bg3);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+
 </main>
  
 <script>
-  function updateCountdown() {
-    const target = new Date("2026-06-14T00:00:00"); // ← ここが日付設定！
-    const now = new Date();
-    const diff = target - now;
-
-    if (diff <= 0) {
-      document.getElementById("countdown").textContent = "Completed!";
-      return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
-
-    document.getElementById("countdown").textContent =
-      `${days} days ${hours} hrs ${mins} mins ${secs} secs`;
+  // ── subscription block ──
+  function toggleSubBlock() {
+    document.getElementById('subBlock').classList.toggle('open');
   }
 
+  // subscription カウントダウン
+  let subCountdownTarget = null;
+  let subCountdownTimer  = null;
+
+  function setSubCountdown() {
+    const val = document.getElementById('subDateInput').value;
+    if (!val) return;
+    subCountdownTarget = new Date(val);
+    document.getElementById('subCountdownTitle').textContent =
+      subCountdownTarget.toLocaleString('ja-JP') + ' まであと';
+    localStorage.setItem('subCountdownTarget', val);
+    tickSubCountdown();
+    if (subCountdownTimer) clearInterval(subCountdownTimer);
+    subCountdownTimer = setInterval(tickSubCountdown, 1000);
+  }
+
+  function tickSubCountdown() {
+    if (!subCountdownTarget) return;
+    const diff = subCountdownTarget - new Date();
+    const el   = document.getElementById('subCountdown');
+    if (!el) return;
+    if (diff <= 0) {
+      el.textContent = '🎉 Completed!';
+      clearInterval(subCountdownTimer);
+      return;
+    }
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    const secs  = Math.floor((diff % 60000)    / 1000);
+    el.textContent = `${days} days  ${hours} hrs  ${mins} mins  ${secs} secs`;
+  }
+
+  // ── 既存カウントダウン（12months） ──
+  function updateCountdown() {
+    const target = new Date("2026-06-14T00:00:00");
+    const diff   = target - new Date();
+    const el     = document.getElementById("countdown");
+    if (!el) return;
+    if (diff <= 0) { el.textContent = "Completed!"; return; }
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    const secs  = Math.floor((diff % 60000)    / 1000);
+    el.textContent = `${days} days ${hours} hrs ${mins} mins ${secs} secs`;
+  }
   setInterval(updateCountdown, 1000);
   updateCountdown();
-</script>
 
-<footer>
-  liv's Setlist Records · 2026 · updated regularly
-</footer>
-
-
-<script>
-  // 月の開閉（手動トグル）
+  // ── 月の開閉 ──
   function toggleMonth(id) {
     document.getElementById(id).classList.toggle('open');
   }
 
-  // 月ナビボタン：押した月だけ開き、他は閉じる
   function openMonth(id, btn) {
-    // replayフィルターが入っていたら解除
     if (replayFilterOn) {
       replayFilterOn = false;
       document.querySelector('.replay-filter-btn')?.classList.remove('active');
@@ -4860,99 +5082,149 @@
         b.querySelectorAll('.session').forEach(s => s.style.display = '');
       });
     }
-    document.querySelectorAll('.month-block').forEach(block => block.classList.remove('open'));
-    document.querySelectorAll('.month-nav-item').forEach(item => item.classList.remove('active'));
+    // 検索中なら検索クリア
+    if (searchActive) clearSearch();
+
+    document.querySelectorAll('.month-block').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.month-nav-item').forEach(i => i.classList.remove('active'));
     const target = document.getElementById(id);
     target.classList.add('open');
     btn.classList.add('active');
     setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
-  // セッション開閉
+  // ── セッション開閉 ──
   function toggleSession(id) {
-    const el = document.getElementById(id);
+    const el  = document.getElementById(id);
     el.classList.toggle('open');
     const btn = el.querySelector('.session-toggle-btn');
     if (btn) btn.style.transform = el.classList.contains('open') ? 'rotate(180deg)' : '';
   }
-  //検索機能追加
-  function searchContent() {
-    const input = document
-      .getElementById("searchInput")
-      .value
-      .toLowerCase();
-  
-    const sessions = document.querySelectorAll(".session");
-  
-    sessions.forEach(session => {
-      const text = session.innerText.toLowerCase();
-  
-      if (text.includes(input)) {
-        session.style.display = "block";
-      } else {
-        session.style.display = "none";
-      }
-    });
+
+  // ── 検索 ──
+  let searchActive = false;
+
+  function clearSearch() {
+    const input = document.getElementById('searchInput');
+    if (input) input.value = '';
+    runSearch('');
   }
-  
-  document.addEventListener('DOMContentLoaded', () => {
-  
-    const searchInput = document.getElementById("searchInput");
-  
-    if (searchInput) {
-  
-      // ▼ スマホ対応：文字を入力した瞬間に検索が動く
-      searchInput.addEventListener("input", () => {
-        searchContent();
-      });
-  
-      // ▼ PC対応：Enterキーでも検索が動く
-      searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          searchContent();
-        }
-      });
+
+  function runSearch(query) {
+    const q = query.trim().toLowerCase();
+    searchActive = q.length > 0;
+    document.getElementById('searchClear')?.classList.toggle('visible', searchActive);
+    if (searchActive && replayFilterOn) {
+      replayFilterOn = false;
+      document.querySelector('.replay-filter-btn')?.classList.remove('active');
     }
-  
-  });
-  // replay フィルター
+    let hitSongs = 0;
+    document.querySelectorAll('.month-block').forEach(block => {
+      let blockHit = false;
+      block.querySelectorAll('.session').forEach(session => {
+        let sessionHit = false;
+        session.querySelectorAll('.song-row').forEach(row => {
+          const nameEl   = row.querySelector('.song-name');
+          const artistEl = row.querySelector('.song-artist');
+          const name   = nameEl?.textContent   || '';
+          const artist = artistEl?.textContent || '';
+          if (!searchActive) {
+            row.style.display = '';
+            row.classList.remove('search-hit');
+            if (nameEl)   nameEl.innerHTML   = name;
+            if (artistEl) artistEl.innerHTML = artist;
+            return;
+          }
+          const hit = name.toLowerCase().includes(q) || artist.toLowerCase().includes(q);
+          row.style.display = hit ? '' : 'none';
+          row.classList.toggle('search-hit', hit);
+          if (hit) {
+            sessionHit = true;
+            hitSongs++;
+            if (nameEl)   nameEl.innerHTML   = highlight(name, q);
+            if (artistEl) artistEl.innerHTML = highlight(artist, q);
+          } else {
+            if (nameEl)   nameEl.innerHTML   = name;
+            if (artistEl) artistEl.innerHTML = artist;
+          }
+        });
+        session.style.display = (!searchActive || sessionHit) ? '' : 'none';
+        if (searchActive && sessionHit) {
+          session.classList.add('open');
+          const btn = session.querySelector('.session-toggle-btn');
+          if (btn) btn.style.transform = 'rotate(180deg)';
+        }
+        if (sessionHit) blockHit = true;
+      });
+      block.style.display = (!searchActive || blockHit) ? '' : 'none';
+      if (searchActive && blockHit) block.classList.add('open');
+    });
+    const meta = document.getElementById('searchMeta');
+    if (meta) meta.textContent = searchActive ? hitSongs + ' songs found' : '';
+  }
+
+  function highlight(text, query) {
+    if (!query) return text;
+    const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(esc, 'gi'), m => '<mark>' + m + '</mark>');
+  }
+
+  // ── replay フィルター ──
   let replayFilterOn = false;
   function toggleReplayFilter(btn) {
     replayFilterOn = !replayFilterOn;
     btn.classList.toggle('active', replayFilterOn);
-
     document.querySelectorAll('.month-block').forEach(block => {
       if (!replayFilterOn) {
-        // フィルター解除：全部戻す
         block.style.display = '';
         block.querySelectorAll('.session').forEach(s => s.style.display = '');
         return;
       }
-      // replayリンクがあるセッションだけ表示
       let hasAny = false;
       block.querySelectorAll('.session').forEach(session => {
         const hasReplay = !!session.querySelector('.session-title a');
         session.style.display = hasReplay ? '' : 'none';
         if (hasReplay) hasAny = true;
       });
-      // replayが1件もない月ごと非表示
       block.style.display = hasAny ? '' : 'none';
-      // replayがある月は開く
       if (hasAny) block.classList.add('open');
     });
-
-    // 月ナビの月ボタンのactiveをリセット
     if (replayFilterOn) {
       document.querySelectorAll('.month-nav-item:not(.replay-filter-btn)').forEach(i => i.classList.remove('active'));
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // 自動カウント
-    let totalStreams = 0;
-    let totalSongs = 0;
+  // ── 検索窓・クリアボタン以外をタッチしたら月を閉じる ──
+  document.addEventListener('click', (e) => {
+    if (!searchActive) return; // 検索中でない時は何もしない
+    const inSearch = e.target.closest('#searchInput, #searchClear, .search-wrap');
+    if (!inSearch) {
+      clearSearch();
+    }
+  });
 
+  // ── DOMContentLoaded ──
+  document.addEventListener('DOMContentLoaded', () => {
+    // 検索イベント
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input',   () => runSearch(searchInput.value));
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  { e.preventDefault(); runSearch(searchInput.value); }
+        if (e.key === 'Escape') clearSearch();
+      });
+    }
+
+    // subscription カウントダウン復元（localStorage）
+    const saved = localStorage.getItem('subCountdownTarget');
+    if (saved) {
+      document.getElementById('subDateInput').value = saved;
+      setSubCountdown();
+    }
+
+    // 自動カウント（streams / songs）
+    let totalStreams = 0;
+    let totalSongs   = 0;
     document.querySelectorAll('.month-block').forEach(block => {
       const sessions = block.querySelectorAll('.session').length;
       const songs    = block.querySelectorAll('.song-row').length;
@@ -4961,7 +5233,6 @@
       const meta = block.querySelector('.month-meta');
       if (meta && songs > 0) meta.textContent = sessions + ' streams · ' + songs + ' songs';
     });
-
     document.querySelectorAll('.stat').forEach(stat => {
       const label = stat.querySelector('.stat-l')?.textContent.trim();
       const num   = stat.querySelector('.stat-n');
@@ -4981,16 +5252,18 @@
       upEl.innerHTML = y + '/' + m + '/' + d;
     }
 
-    // スクロールトップボタンの表示/非表示
+    // スクロールトップボタン
     const scrollBtn = document.querySelector('.scroll-top');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
-        scrollBtn.classList.add('visible');
-      } else {
-        scrollBtn.classList.remove('visible');
-      }
-    });
+    if (scrollBtn) {
+      window.addEventListener('scroll', () => {
+        scrollBtn.classList.toggle('visible', window.scrollY > 300);
+      });
+    }
   });
 </script>
+
+<footer>
+  liv's Setlist Records · 2026 · updated regularly
+</footer>
 </body>
 </html>
