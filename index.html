@@ -4828,16 +4828,10 @@
       <span class="sub-toggle-chevron" id="subChevron">▾</span>
     </button>
     <div class="sub-body" id="subBody">
-      <!-- カウントダウン日時設定 -->
-      <div class="sub-date-input-wrap">
-        <span class="sub-date-label">TARGET DATE</span>
-        <input type="datetime-local" class="sub-date-input" id="subDateInput" />
-        <button class="sub-date-set-btn" onclick="setSubCountdown()">SET</button>
-      </div>
-      <!-- カウントダウン -->
+      <!-- 経過月数表示 -->
       <div class="sub-countdown-wrap">
-        <div class="sub-countdown-title" id="subCountdownTitle">日時を設定してください</div>
-        <div class="sub-countdown-display" id="subCountdown">--</div>
+        <div class="sub-elapsed-display" id="subElapsed">--</div>
+        <div class="sub-elapsed-sub" id="subElapsedSub"></div>
       </div>
       <!-- 動画 -->
       <div class="sub-video-wrap">
@@ -4948,8 +4942,20 @@
       color: #d3b3ff;
       letter-spacing: 1px;
     }
-    /* 日時入力エリア */
-    .sub-date-input-wrap {
+    .sub-elapsed-display {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #d3b3ff;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .sub-elapsed-sub {
+      font-size: 11px;
+      color: #7a5aaa;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.05em;
+    }
       display: flex;
       align-items: center;
       gap: 8px;
@@ -5019,38 +5025,32 @@
     document.getElementById('subBlock').classList.toggle('open');
   }
 
-  // subscription カウントダウン
-  let subCountdownTarget = null;
-  let subCountdownTimer  = null;
-
-  function setSubCountdown() {
-    const val = document.getElementById('subDateInput').value;
-    if (!val) return;
-    subCountdownTarget = new Date(val);
-    document.getElementById('subCountdownTitle').textContent =
-      subCountdownTarget.toLocaleString('ja-JP') + ' まであと';
-    localStorage.setItem('subCountdownTarget', val);
-    tickSubCountdown();
-    if (subCountdownTimer) clearInterval(subCountdownTimer);
-    subCountdownTimer = setInterval(tickSubCountdown, 1000);
-  }
-
-  function tickSubCountdown() {
-    if (!subCountdownTarget) return;
-    const diff = subCountdownTarget - new Date();
-    const el   = document.getElementById('subCountdown');
+  // 2025年6月14日を起点に経過月数を表示
+  function updateSubElapsed() {
+    const start = new Date('2025-06-14T00:00:00');
+    const now   = new Date();
+    const el    = document.getElementById('subElapsed');
+    const sub   = document.getElementById('subElapsedSub');
     if (!el) return;
-    if (diff <= 0) {
-      el.textContent = '🎉 Completed!';
-      clearInterval(subCountdownTimer);
-      return;
-    }
-    const days  = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins  = Math.floor((diff % 3600000)  / 60000);
-    const secs  = Math.floor((diff % 60000)    / 1000);
-    el.textContent = `${days} days  ${hours} hrs  ${mins} mins  ${secs} secs`;
+
+    // 経過月数（小数切り捨て）
+    let months = (now.getFullYear() - start.getFullYear()) * 12
+                 + (now.getMonth() - start.getMonth());
+    // 日付が起点日より前なら1か月引く
+    if (now.getDate() < start.getDate()) months--;
+    if (months < 0) months = 0;
+
+    // 経過日数（端数）
+    const nextMilestone = new Date(start);
+    nextMilestone.setMonth(nextMilestone.getMonth() + months + 1);
+    const daysLeft = Math.ceil((nextMilestone - now) / 86400000);
+
+    el.textContent  = months + ' months consecutive subscription 🥳';
+    sub.textContent = 'since 2025/06/14 · next milestone in ' + daysLeft + ' days';
   }
+
+  updateSubElapsed();
+  setInterval(updateSubElapsed, 60000); // 1分ごとに更新
 
   // ── 既存カウントダウン（12months） ──
   function updateCountdown() {
@@ -5213,13 +5213,6 @@
         if (e.key === 'Enter')  { e.preventDefault(); runSearch(searchInput.value); }
         if (e.key === 'Escape') clearSearch();
       });
-    }
-
-    // subscription カウントダウン復元（localStorage）
-    const saved = localStorage.getItem('subCountdownTarget');
-    if (saved) {
-      document.getElementById('subDateInput').value = saved;
-      setSubCountdown();
     }
 
     // 自動カウント（streams / songs）
