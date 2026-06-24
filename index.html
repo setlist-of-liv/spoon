@@ -225,7 +225,7 @@
     transition: border-color 0.2s, color 0.2s, opacity 0.3s;
     opacity: 0;
     pointer-events: none;
-    z-index: 100;
+    z-index: 300;
   }
   .scroll-top.visible { opacity: 1; pointer-events: auto; }
   .scroll-top:hover { border-color: #555; color: var(--text); }
@@ -5131,15 +5131,15 @@
       margin: 20px 0;
       padding: 12px;
       text-align: center;
-      border: 2px solid #a56eff;
+      border: 2px solid #4ade80;
       border-radius: 8px;
-      background: rgba(165, 110, 255, 0.08);
+      background: rgba(74, 222, 128, 0.08);
     }
 
     .countdown-title {
       font-size: 1rem;
       font-weight: 700;
-      color: #a56eff;
+      color: #4ade80;
       margin-bottom: 6px;
     }
 
@@ -5152,7 +5152,7 @@
     #countdown {
       font-size: 0.8rem;
       font-weight: 600;
-      color: #d3b3ff;
+      color: #86efac;
       letter-spacing: 1px;
     }
   </style>
@@ -5568,5 +5568,220 @@
 <footer>
   liv's Setlist Records · 2026 · updated regularly
 </footer>
+
+<!-- FALLING BUNNIES -->
+<canvas id="bunnyCanvas"></canvas>
+
+
+<!-- BALLOON BUTTONS -->
+<div class="balloons-wrap">
+
+  <div class="balloon-item" style="--delay:0s;--lean:-8deg;">
+    <button class="balloon-btn" style="--bc:#f9a8d4;--bs:rgba(249,168,212,0.18);" onclick="playBalloon(1)">⸜ﾌｨｰﾊﾞｰﾀｲﾑ⸝‍</button>
+    <svg class="balloon-string" viewBox="0 0 10 55" preserveAspectRatio="none"><path d="M5 0 Q7 28 5 55" stroke="rgba(249,168,212,0.55)" stroke-width="1.2" fill="none"/></svg>
+  </div>
+
+  <div class="balloon-item" style="--delay:0.7s;--lean:0deg;">
+    <button class="balloon-btn" style="--bc:#a5f3c0;--bs:rgba(165,243,192,0.18);" onclick="playBalloon(2)">⸜ｱｰｲ⸝‍</button>
+    <svg class="balloon-string" viewBox="0 0 10 55" preserveAspectRatio="none"><path d="M5 0 Q3 28 5 55" stroke="rgba(165,243,192,0.55)" stroke-width="1.2" fill="none"/></svg>
+  </div>
+
+  <div class="balloon-item" style="--delay:1.4s;--lean:8deg;">
+    <button class="balloon-btn" style="--bc:#bfdbfe;--bs:rgba(191,219,254,0.18);" onclick="playBalloon(3)">⸜ｶｽ⸝‍</button>
+    <svg class="balloon-string" viewBox="0 0 10 55" preserveAspectRatio="none"><path d="M5 0 Q7 28 5 55" stroke="rgba(191,219,254,0.55)" stroke-width="1.2" fill="none"/></svg>
+  </div>
+
+</div>
+
+<style>
+  /* ── BUNNY CANVAS ── */
+  #bunnyCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+  }
+  .hero, .stats, .top-controls, .container, footer,
+  .scroll-top, .countdown-section {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── BALLOONS ── */
+  .balloons-wrap {
+    position: fixed;
+    bottom: 0;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 6px;
+    z-index: 200;
+    pointer-events: none;
+  }
+  .balloon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    animation: floatBalloon 3s ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    transform-origin: bottom center;
+  }
+  @keyframes floatBalloon {
+    0%,100% { transform: translateY(0px) rotate(var(--lean, 0deg)); }
+    50%      { transform: translateY(-10px) rotate(calc(var(--lean, 0deg) * -0.6)); }
+  }
+  .balloon-btn {
+    background: var(--bs);
+    border: 1.5px solid var(--bc);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    color: var(--bc);
+    font-size: 9px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 12px 8px 16px;
+    width: 62px;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    transition: transform 0.15s, filter 0.15s;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+    position: relative;
+  }
+  .balloon-btn::before {
+    content: '';
+    position: absolute;
+    top: 10px; left: 12px;
+    width: 10px; height: 7px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    transform: rotate(-30deg);
+    pointer-events: none;
+  }
+  .balloon-btn::after {
+    content: '▾';
+    position: absolute;
+    bottom: -9px;
+    font-size: 10px;
+    color: var(--bc);
+    opacity: 0.8;
+  }
+  .balloon-btn:hover  { transform: scale(1.08); filter: brightness(1.15); }
+  .balloon-btn:active { transform: scale(0.95); }
+  .balloon-string {
+    width: 10px;
+    height: 55px;
+    display: block;
+    flex-shrink: 0;
+  }
+</style>
+
+<script>
+// ── BALLOONS ──
+const balloonSounds = {
+  1: 'sound1.mp3',
+  2: 'sound2.mp3',
+  3: 'sound3.mp3',
+};
+function playBalloon(n) {
+  const src = balloonSounds[n];
+  if (!src) return;
+  new Audio(src).play().catch(() => {});
+  const item = document.querySelectorAll('.balloon-item')[n - 1];
+  if (item) {
+    item.style.transform = 'scale(1.2) rotate(5deg)';
+    setTimeout(() => { item.style.transform = ''; }, 200);
+  }
+}
+</script>
+
+<script>
+// ── FALLING BUNNIES ──
+(function () {
+  const canvas = document.getElementById('bunnyCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  function drawBunny(ctx, x, y, size) {
+    const s = size;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = '#ffffff';
+    // 左耳
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.18, -s * 0.55, s * 0.11, s * 0.28, -0.15, 0, Math.PI * 2);
+    ctx.fill();
+    // 右耳
+    ctx.beginPath();
+    ctx.ellipse(s * 0.18, -s * 0.55, s * 0.11, s * 0.28, 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    // 頭
+    ctx.beginPath();
+    ctx.arc(0, 0, s * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const BUNNY_COUNT = 18;
+  let bunnies = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randomBunny(fromTop) {
+    const size = 18 + Math.random() * 28;
+    return {
+      x:       Math.random() * W,
+      y:       fromTop ? -size * 1.5 : Math.random() * H,
+      size,
+      speed:   0.4 + Math.random() * 0.7,
+      drift:   (Math.random() - 0.5) * 0.3,
+      opacity: 0.5 + Math.random() * 0.5,
+      angle:   Math.random() * Math.PI * 2,
+      spin:    (Math.random() - 0.5) * 0.008,
+    };
+  }
+
+  function init() {
+    resize();
+    bunnies = Array.from({ length: BUNNY_COUNT }, () => randomBunny(false));
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    bunnies.forEach(b => {
+      b.y     += b.speed;
+      b.x     += b.drift;
+      b.angle += b.spin;
+      if (b.y > H + b.size * 2)  Object.assign(b, randomBunny(true));
+      if (b.x < -b.size * 2)     b.x = W + b.size;
+      if (b.x >  W + b.size * 2) b.x = -b.size;
+      ctx.save();
+      ctx.globalAlpha = b.opacity;
+      ctx.translate(b.x, b.y);
+      ctx.rotate(b.angle);
+      ctx.translate(-b.x, -b.y);
+      drawBunny(ctx, b.x, b.y, b.size);
+      ctx.restore();
+    });
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  tick();
+})();
+</script>
+
 </body>
 </html>
