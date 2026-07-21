@@ -5364,30 +5364,7 @@
 
     </div>
   </div>
-
-  <!-- <div class="month-block" id="m05">
-    <div class="month-toggle" onclick="toggleMonth('m05')">
-      <div>
-        <div class="month-name">May — 5月</div>
-        <div class="month-meta">coming soon</div>
-      </div>
-      <span class="month-chevron">▾</span>
-    </div>
-    <div class="month-body">
-      <div class="session">
-        <div class="session-header">
-          <div class="session-left">
-            <span class="session-num">—</span>
-            <div class="session-info">
-              <div class="session-title" style="color:var(--text3);">セットリストを追加予定</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
- <div class="year-head">2025</div>
+<div class="year-head">2025</div>
 <!-- #2025残っているreplay -->
       <div class="session" id="s2501">
         <div class="session-header">
@@ -6056,11 +6033,11 @@
       });
     }
 
-    // ── 全曲集計 ──
-    const songCount  = {};  // "曲名|||アーティスト" → 回数
-    const artistCount = {}; // アーティスト → 回数
+    // ── 全曲集計（session IDありのみ対象）──
+    const songCount  = {};
+    const artistCount = {};
 
-    document.querySelectorAll('.song-row').forEach(row => {
+    document.querySelectorAll('.session[id^="s"] .song-row').forEach(row => {
       const name   = row.querySelector('.song-name')?.textContent.trim()   || '';
       const artist = row.querySelector('.song-artist')?.textContent.trim() || '';
       if (!name) return;
@@ -6099,8 +6076,12 @@
     let totalSongs   = 0;
 
     document.querySelectorAll('.month-block').forEach(block => {
-      const sessions = block.querySelectorAll('.session').length;
-      const songs    = block.querySelectorAll('.song-row').length;
+      // s+数字のIDを持つsessionのみカウント
+      const sessionEls = block.querySelectorAll('.session[id^="s"]');
+      const sessions   = sessionEls.length;
+      // song-rowはsession内のみカウント
+      let songs = 0;
+      sessionEls.forEach(s => { songs += s.querySelectorAll('.song-row').length; });
       totalStreams += sessions;
       totalSongs   += songs;
       if (songs === 0) return;
@@ -6111,11 +6092,13 @@
       // 月ごとの曲・アーティスト集計
       const mSong   = {};
       const mArtist = {};
-      block.querySelectorAll('.song-row').forEach(row => {
-        const name   = row.querySelector('.song-name')?.textContent.trim()   || '';
-        const artist = row.querySelector('.song-artist')?.textContent.trim() || '';
-        if (name)   mSong[name]     = (mSong[name]     || 0) + 1;
-        if (artist) mArtist[artist] = (mArtist[artist] || 0) + 1;
+      sessionEls.forEach(s => {
+        s.querySelectorAll('.song-row').forEach(row => {
+          const name   = row.querySelector('.song-name')?.textContent.trim()   || '';
+          const artist = row.querySelector('.song-artist')?.textContent.trim() || '';
+          if (name)   mSong[name]     = (mSong[name]     || 0) + 1;
+          if (artist) mArtist[artist] = (mArtist[artist] || 0) + 1;
+        });
       });
 
       const topSongs   = Object.entries(mSong).sort((a,b)=>b[1]-a[1]).slice(0,3);
@@ -6126,8 +6109,9 @@
       const innerDiv = toggle?.querySelector('div');
       if (!innerDiv) return;
 
-      // .month-meta は非表示のため更新不要
+      // .month-meta を実際の集計値で更新
       const meta = innerDiv.querySelector('.month-meta');
+      if (meta) meta.textContent = sessions + ' streams · ' + songs + ' songs';
 
       // チップ + サマリー詳細を追加
       const replayHTML = replayCount > 0
