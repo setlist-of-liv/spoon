@@ -230,6 +230,149 @@
   .scroll-top.visible { opacity: 1; pointer-events: auto; }
   .scroll-top:hover { border-color: #555; color: var(--text); }
 
+  /* ── RANKING ── */
+  .ranking-section {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg1);
+  }
+  .ranking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .ranking-header:hover { background: var(--bg2); }
+  .ranking-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+  }
+  .ranking-chevron {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    transition: transform 0.3s;
+  }
+  .ranking-section.open .ranking-chevron { transform: rotate(180deg); }
+  .ranking-body {
+    display: none;
+    padding: 0.75rem 2rem 1rem;
+  }
+  .ranking-section.open .ranking-body { display: block; }
+  .ranking-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 6px;
+  }
+  .ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .ranking-item:last-child { border-bottom: none; }
+  .rank-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .rank-num.top3 { color: #c8ff00; }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-name {
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rank-artist {
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 300;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rank-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    flex-shrink: 0;
+  }
+  .rank-bar-wrap {
+    width: 40px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .rank-bar {
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
+  /* ── SUMMARY CARD ── */
+  .summary-chips {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  .summary-chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .summary-chip .chip-num { color: var(--text2); font-size: 12px; }
+  .month-meta {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .summary-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 10px 0 4px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .month-block.open .summary-detail { display: grid; }
+  .detail-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--text3);
+    padding: 2px 0;
+  }
+  .detail-item .d-rank { font-family: 'Space Mono', monospace; font-size: 9px; color: #333; min-width: 12px; }
+  .detail-item .d-name { color: #777; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .detail-item .d-count { font-family: 'Space Mono', monospace; font-size: 9px; color: #444; flex-shrink: 0; }
+
   /* ── MONTH BLOCK ── */
   .month-block { margin-bottom: 1rem; }
 
@@ -583,6 +726,17 @@
   <a class="month-nav-item replay-filter-btn" onclick="toggleReplayFilter(this)">
     <span class="spoon-dot-inline"></span> replayあり
   </a>
+</div>
+
+<!-- RANKING -->
+<div class="ranking-section" id="rankingSection">
+  <div class="ranking-header" onclick="toggleRanking()">
+    <span class="ranking-title">🎵 よく歌う曲 Top 10</span>
+    <span class="ranking-chevron" id="rankingChevron">▾</span>
+  </div>
+  <div class="ranking-body" id="rankingBody">
+    <ol class="ranking-list" id="rankingList"></ol>
+  </div>
 </div>
 
 
@@ -5051,7 +5205,7 @@
             <span class="session-num">#06</span>
             <div class="session-info">
               <div class="session-title">7月11日</div>
-              <div class="session-count">15 songs</div>
+              <div class="session-count"></div>
             </div>
           </div>
           <button class="session-toggle-btn" onclick="toggleSession('s0711')">▾</button>
@@ -5885,6 +6039,11 @@
     if (!inSearch) clearSearch();
   });
 
+  // ── ランキング開閉 ──
+  function toggleRanking() {
+    document.getElementById('rankingSection').classList.toggle('open');
+  }
+
   // ── DOMContentLoaded ──
   document.addEventListener('DOMContentLoaded', () => {
     // 検索イベント
@@ -5897,17 +6056,118 @@
       });
     }
 
-    // 自動カウント（streams / songs）
+    // ── 全曲集計 ──
+    const songCount  = {};  // "曲名|||アーティスト" → 回数
+    const artistCount = {}; // アーティスト → 回数
+
+    document.querySelectorAll('.song-row').forEach(row => {
+      const name   = row.querySelector('.song-name')?.textContent.trim()   || '';
+      const artist = row.querySelector('.song-artist')?.textContent.trim() || '';
+      if (!name) return;
+      const key = name + '|||' + artist;
+      songCount[key]    = (songCount[key]    || 0) + 1;
+      if (artist) artistCount[artist] = (artistCount[artist] || 0) + 1;
+    });
+
+    // ── Top10ランキング描画 ──
+    const sorted = Object.entries(songCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+    const maxCount = sorted[0]?.[1] || 1;
+    const list = document.getElementById('rankingList');
+    if (list) {
+      sorted.forEach(([key, count], i) => {
+        const [name, artist] = key.split('|||');
+        const pct = Math.round((count / maxCount) * 100);
+        const li  = document.createElement('li');
+        li.className = 'ranking-item';
+        li.innerHTML = `
+          <span class="rank-num${i < 3 ? ' top3' : ''}">${i + 1}</span>
+          <div class="rank-info">
+            <div class="rank-name">${name}</div>
+            <div class="rank-artist">${artist}</div>
+          </div>
+          <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%"></div></div>
+          <span class="rank-count">×${count}</span>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // ── 月ごとの集計 & サマリーカード ──
     let totalStreams = 0;
     let totalSongs   = 0;
+
     document.querySelectorAll('.month-block').forEach(block => {
       const sessions = block.querySelectorAll('.session').length;
       const songs    = block.querySelectorAll('.song-row').length;
       totalStreams += sessions;
-      totalSongs  += songs;
-      const meta = block.querySelector('.month-meta');
-      if (meta && songs > 0) meta.textContent = sessions + ' streams · ' + songs + ' songs';
+      totalSongs   += songs;
+      if (songs === 0) return;
+
+      // replayの数
+      const replayCount = block.querySelectorAll('.session-title a').length;
+
+      // 月ごとの曲・アーティスト集計
+      const mSong   = {};
+      const mArtist = {};
+      block.querySelectorAll('.song-row').forEach(row => {
+        const name   = row.querySelector('.song-name')?.textContent.trim()   || '';
+        const artist = row.querySelector('.song-artist')?.textContent.trim() || '';
+        if (name)   mSong[name]     = (mSong[name]     || 0) + 1;
+        if (artist) mArtist[artist] = (mArtist[artist] || 0) + 1;
+      });
+
+      const topSongs   = Object.entries(mSong).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      const topArtists = Object.entries(mArtist).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+      // month-toggle 内の div を拡張
+      const toggle   = block.querySelector('.month-toggle');
+      const innerDiv = toggle?.querySelector('div');
+      if (!innerDiv) return;
+
+      // .month-meta は非表示のため更新不要
+      const meta = innerDiv.querySelector('.month-meta');
+
+      // チップ + サマリー詳細を追加
+      const replayHTML = replayCount > 0
+        ? `<span class="summary-chip"><span class="chip-num">${replayCount}</span>
+             <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 6px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:100px;font-family:'Space Mono',monospace;font-size:9px;color:#ff6b35;">
+               <span style="width:4px;height:4px;border-radius:50%;background:#ff6b35;display:inline-block;"></span>replay
+             </span></span>`
+        : '';
+
+      const chipsHTML = replayHTML ? `
+        <div class="summary-chips">
+          ${replayHTML}
+        </div>
+      ` : '';
+
+      const topSongsHTML   = topSongs.map(([n,c],i)=>
+        `<div class="detail-item"><span class="d-rank">${i+1}</span><span class="d-name">${n}</span><span class="d-count">×${c}</span></div>`
+      ).join('');
+      const topArtistsHTML = topArtists.map(([n,c],i)=>
+        `<div class="detail-item"><span class="d-rank">${i+1}</span><span class="d-name">${n}</span><span class="d-count">×${c}</span></div>`
+      ).join('');
+
+      const detailHTML = `
+        <div class="summary-detail">
+          <div>
+            <div class="detail-label">Top artists</div>
+            ${topArtistsHTML}
+          </div>
+          <div>
+            <div class="detail-label">Top songs</div>
+            ${topSongsHTML}
+          </div>
+        </div>
+      `;
+
+      // 既存のmonth-metaの後に追加
+      if (meta) meta.insertAdjacentHTML('afterend', chipsHTML + detailHTML);
     });
+
+    // トップ stats 更新
     document.querySelectorAll('.stat').forEach(stat => {
       const label = stat.querySelector('.stat-l')?.textContent.trim();
       const num   = stat.querySelector('.stat-n');
