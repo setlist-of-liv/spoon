@@ -6470,11 +6470,19 @@
       <span class="sub-toggle-chevron" id="subChevron">▾</span>
     </button>
     <div class="sub-body" id="subBody">
-      <!-- 経過月数表示 -->
-      <div class="sub-countdown-wrap">
+      <!-- 過去の記録 -->
+      <div class="sub-history-wrap" id="subHistoryWrap">
+        <div class="sub-section-label">── 過去の記録 ──</div>
+        <div id="subHistoryList"></div>
+      </div>
+
+      <!-- 現在の継続 -->
+      <div class="sub-countdown-wrap" id="subCurrentWrap">
+        <div class="sub-section-label">── 現在 ──</div>
         <div class="sub-elapsed-display" id="subElapsed">--</div>
         <div class="sub-elapsed-sub" id="subElapsedSub"></div>
       </div>
+
       <!-- 動画 -->
       <div class="sub-video-wrap">
         <video
@@ -6611,6 +6619,39 @@
       font-family: 'Noto Sans JP', monospace;
       letter-spacing: 0.05em;
     }
+
+    /* 過去の記録 / セクションラベル */
+    .sub-section-label {
+      font-size: 10px;
+      color: #7a5aaa;
+      font-family: 'Noto Sans JP', monospace;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .sub-history-wrap {
+      margin-bottom: 1.25rem;
+    }
+    .sub-history-item {
+      text-align: center;
+      padding: 0.6rem 1rem;
+      border: 1px solid #2a1f3d;
+      border-radius: 6px;
+      background: rgba(165,110,255,0.04);
+      margin-bottom: 8px;
+    }
+    .sub-history-period {
+      font-size: 11px;
+      color: #7a5aaa;
+      font-family: 'Noto Sans JP', monospace;
+      margin-bottom: 3px;
+    }
+    .sub-history-months {
+      font-size: 13px;
+      font-weight: 600;
+      color: #c9a3ff;
+      font-family: 'Noto Sans JP', monospace;
+    }
       display: flex;
       align-items: center;
       gap: 8px;
@@ -6680,30 +6721,82 @@
     document.getElementById('subBlock').classList.toggle('open');
   }
 
-  // 2025年6月14日を起点に経過月数を表示
-  function updateSubElapsed() {
-    const start = new Date('2025-06-14T00:00:00');
-    const now   = new Date();
-    const el    = document.getElementById('subElapsed');
-    const sub   = document.getElementById('subElapsedSub');
-    if (!el) return;
+  // ── サブスク記録データ ──
+  // 過去の記録（途切れるたびにここに追加していく）
+  const subHistory = [
+    { start: '2025-06-14', end: '2026-09-07' }
+  ];
+  // 新しい起点（再加入した日）。決まったらここに日付を入れる。未定なら null のまま。
+  const subCurrentStart = null; // 例: '2026-10-01'
 
-    // 経過月数（小数切り捨て）
+  function monthsBetween(startStr, endStr) {
+    const start = new Date(startStr + 'T00:00:00');
+    const end   = new Date(endStr   + 'T00:00:00');
+    let months = (end.getFullYear() - start.getFullYear()) * 12
+                 + (end.getMonth() - start.getMonth());
+    if (end.getDate() < start.getDate()) months--;
+    if (months < 0) months = 0;
+    return months;
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function renderSubHistory() {
+    const wrap = document.getElementById('subHistoryWrap');
+    const list = document.getElementById('subHistoryList');
+    if (!list) return;
+
+    if (subHistory.length === 0) {
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = '';
+
+    list.innerHTML = subHistory.map(rec => {
+      const months = monthsBetween(rec.start, rec.end);
+      return `
+        <div class="sub-history-item">
+          <div class="sub-history-period">${formatDate(rec.start)} 〜 ${formatDate(rec.end)}</div>
+          <div class="sub-history-months">${months} months consecutive subscription🥳</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 現在の継続表示（新しい起点が決まっている場合のみ）
+  function updateSubElapsed() {
+    const wrap = document.getElementById('subCurrentWrap');
+    const el   = document.getElementById('subElapsed');
+    const sub  = document.getElementById('subElapsedSub');
+    if (!wrap || !el) return;
+
+    if (!subCurrentStart) {
+      // 新しい起点が未定 → 現在ブロックは非表示
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = '';
+
+    const start = new Date(subCurrentStart + 'T00:00:00');
+    const now   = new Date();
+
     let months = (now.getFullYear() - start.getFullYear()) * 12
                  + (now.getMonth() - start.getMonth());
-    // 日付が起点日より前なら1か月引く
     if (now.getDate() < start.getDate()) months--;
     if (months < 0) months = 0;
 
-    // 経過日数（端数）
     const nextMilestone = new Date(start);
     nextMilestone.setMonth(nextMilestone.getMonth() + months + 1);
     const daysLeft = Math.ceil((nextMilestone - now) / 86400000);
 
-    el.textContent  = months + ' months consecutive subscription 🥳';
-    sub.textContent = 'next milestone in ' + daysLeft + ' days';
+    el.textContent  = formatDate(subCurrentStart) + '〜';
+    sub.textContent = months + ' months consecutive subscription🥳 · next milestone in ' + daysLeft + ' days';
   }
 
+  renderSubHistory();
   updateSubElapsed();
   setInterval(updateSubElapsed, 60000); // 1分ごとに更新
 
@@ -6711,8 +6804,16 @@
   let birthdayEmojiStarted = false;
 
   function updateCountdown() {
-    const target = new Date("2026-09-03T00:00:00");
-    const now    = new Date();
+    const now = new Date();
+
+    // 今年の誕生日を計算し、すでに過ぎていたら来年に自動切り替え
+    let target = new Date(now.getFullYear() + "-09-03T00:00:00");
+    const todayDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetDateOnly = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    if (todayDateOnly > targetDateOnly) {
+      target = new Date((now.getFullYear() + 1) + "-09-03T00:00:00");
+    }
+
     const diff   = target - now;
     const el     = document.getElementById("countdown");
     const subEl  = document.getElementById("countdownSub");
@@ -6736,6 +6837,20 @@
         birthdayEmojiStarted = true;
         startBirthdayEmojiRain();
       }
+      return;
+    }
+    birthdayEmojiStarted = false;
+
+    // 誕生日3ヶ月前の日付を計算
+    const threeMonthsBefore = new Date(target);
+    threeMonthsBefore.setMonth(threeMonthsBefore.getMonth() - 3);
+
+    if (now < threeMonthsBefore) {
+      // まだ3ヶ月前より前 → シンプル表示のみ
+      if (subEl) subEl.style.display = "none";
+      if (msgEl) msgEl.style.display = "none";
+      el.style.display = "";
+      el.textContent = "livｻﾝ's birthday is Sep 3rd.";
       return;
     }
 
