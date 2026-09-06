@@ -6457,7 +6457,7 @@
   </div>
 
  <section class="countdown-section">
-  <div class="countdown-title">livｻﾝ's birthday🎂</div>
+  <div class="countdown-title" id="countdownTitle">livｻﾝ's birthday🎂</div>
     <div class="countdown-sub" id="countdownSub">まであと</div>
     <div id="countdown"></div>
     <div id="birthdayMessage" class="birthday-message" style="display:none;"></div>
@@ -6483,8 +6483,13 @@
         <div class="sub-elapsed-sub" id="subElapsedSub"></div>
       </div>
 
-      <!-- 動画 -->
+      <!-- 動画（タブ切り替え） -->
       <div class="sub-video-wrap">
+        <div class="video-tabs">
+          <button class="video-tab active" onclick="switchVideoTab(0, this)">🎂 12months</button>
+          <button class="video-tab" onclick="switchVideoTab(1, this)">⏳ カウントダウン</button>
+          <button class="video-tab" onclick="switchVideoTab(2, this)">🎤 歌配信</button>
+        </div>
         <video
           id="subVideo"
           src="video.mp4"
@@ -6492,12 +6497,13 @@
           playsinline
           preload="metadata"
         ></video>
-        <p class="sub-video-note">※サブスク12months継続記念動画作ってみました\♪♪/</p>
+        <p class="sub-video-note" id="subVideoNote">※サブスク12months継続記念動画作ってみました\♪♪/</p>
       </div>
     </div>
   </div>
 
   <style>
+
     .countdown-section {
       margin: 20px 0;
       padding: 12px;
@@ -6692,6 +6698,32 @@
 
     /* 動画 */
     .sub-video-wrap { margin-top: 0.5rem; }
+    .video-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .video-tab {
+      flex: 1;
+      min-width: 90px;
+      background: rgba(165,110,255,0.06);
+      border: 1px solid #2a1f3d;
+      border-radius: 6px;
+      color: #7a5aaa;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .video-tab:hover { border-color: #a56eff; color: #c9a3ff; }
+    .video-tab.active {
+      background: rgba(165,110,255,0.18);
+      border-color: #a56eff;
+      color: #d3b3ff;
+    }
     .sub-video-wrap video {
       width: 100%;
       border-radius: 6px;
@@ -6719,6 +6751,28 @@
   // ── subscription block ──
   function toggleSubBlock() {
     document.getElementById('subBlock').classList.toggle('open');
+  }
+
+  // ── 動画タブ切り替え ──
+  const subVideos = [
+    { src: 'video.mp4',  note: '※サブスク12months継続記念動画作ってみました\\♪♪/' },
+    { src: 'video1.mp4', note: '※2026年誕生日カウントダウン配信動画作ってみました\\♪♪/' },
+    { src: 'video2.mp4', note: '※2026年誕生日歌配信動画作ってみました\\♪♪/' },
+  ];
+
+  function switchVideoTab(index, btn) {
+    const video = document.getElementById('subVideo');
+    const note  = document.getElementById('subVideoNote');
+    const data  = subVideos[index];
+    if (!video || !data) return;
+
+    video.pause();
+    video.src = data.src;
+    video.load();
+    if (note) note.textContent = data.note;
+
+    document.querySelectorAll('.video-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
   }
 
   // ── サブスク記録データ ──
@@ -6818,6 +6872,7 @@
     const el     = document.getElementById("countdown");
     const subEl  = document.getElementById("countdownSub");
     const msgEl  = document.getElementById("birthdayMessage");
+    const titleEl = document.getElementById("countdownTitle");
     if (!el) return;
 
     // 誕生日当日かどうか判定（日付だけで比較）
@@ -6827,6 +6882,7 @@
       now.getDate()     === target.getDate();
 
     if (isBirthdayToday) {
+      if (titleEl) titleEl.style.display = "";
       if (subEl) subEl.style.display = "none";
       el.style.display = "none";
       if (msgEl) {
@@ -6846,7 +6902,8 @@
     threeMonthsBefore.setMonth(threeMonthsBefore.getMonth() - 3);
 
     if (now < threeMonthsBefore) {
-      // まだ3ヶ月前より前 → シンプル表示のみ
+      // まだ3ヶ月前より前 → シンプル表示のみ（タイトルは非表示）
+      if (titleEl) titleEl.style.display = "none";
       if (subEl) subEl.style.display = "none";
       if (msgEl) msgEl.style.display = "none";
       el.style.display = "";
@@ -6854,6 +6911,7 @@
       return;
     }
 
+    if (titleEl) titleEl.style.display = "";
     if (subEl) subEl.style.display = "";
     el.style.display = "";
     if (msgEl) msgEl.style.display = "none";
