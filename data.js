@@ -139,7 +139,7 @@ const SETLISTS = [
 
   // ══ Septemper — 9月 ══
   { id: "m09", name: "Septemper — 9月", sessions: [
-    { id: "s0930b", num: "#21", title: "9月30日（今月ラスト歌枠！！！）", songs: [
+    { id: "s0930b", num: "#21", title: "9月30日（今月ラスト歌枠！！！）", replay: "https://www.spooncast.net/jp/cast/6996712?utm_source=spoon_share&utm_medium=referral&utm_campaign=cast_share&utm_content=6996712&utm_term=316309347&ts=1793004231500", songs: [
       ["花cherie", "Nissy"],
       ["Subtitle", "Official髭男dism"],
       ["7th Trigger", "UVERworld"],
